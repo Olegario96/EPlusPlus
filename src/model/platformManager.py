@@ -53,9 +53,9 @@ class PlatformManager(object):
 		return True
 
 	def checkAndInstallWindows(self):
-		if not self.checkTool("runenergyplys"):
+		if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
 			self.installer.installEplusLinux()
-			if not self.checkTool("runenergyplus"):
+			if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
 
 		if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):

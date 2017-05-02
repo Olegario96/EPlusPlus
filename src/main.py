@@ -4,4 +4,4 @@ from test.testPlatformManager import TestPlatformManager
 
 testPM = TestPlatformManager()
 pM = PlatformManager()
-testPM.testCheckAndInstallLinux(pM)
+testPM.testCheckAndInstallWindows(pM)
