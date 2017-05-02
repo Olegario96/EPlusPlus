@@ -2,8 +2,8 @@ import os
 import signal
 import subprocess
 import platform
-import exception.installException
-from installer import Installer
+from  exception.installException import InstallException
+from model.installer import Installer
 
 class PlatformManager(object):
 	"""docstring for PlatformManager"""
@@ -12,13 +12,13 @@ class PlatformManager(object):
 		self.installer = Installer()
 
 	def isLinux(self):
-		return platform == "linux" or platform == "linux2"
+		return platform.system() == "Linux" or platform.system() == "Linux2"
 
 	def isWindows(self):
-		return platform == "win32"
+		return platform.system() == "Windows"
 
 	def isOSX(self):
-		return platform == "darwin"
+		return platform.system() == "Darwin"
 
 	def checkTool(self, exc):
 		try:
@@ -29,25 +29,39 @@ class PlatformManager(object):
 			if error.errno == os.errno.ENOENT:
 				return False
 
-	def installDBrowser(self):
-		pass
 
 	def checkAndInstall(self):
 		if self.isOSX():
-			self.checkAndInstallOSX()
+			return self.checkAndInstallOSX()
 		elif self.isLinux():
-			self.checkAndInstallLinux()
+			return self.checkAndInstallLinux()
 		else:
-			self.checkAndInstallWindows()
+			return self.checkAndInstallWindows()
 
 
 	def checkAndInstallLinux(self):
-		if not self.checkTool("runenergyplys"):
+		if not self.checkTool("runenergyplus"):
 			self.installer.installEplusLinux()
 			if not self.checkTool("runenergyplus"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
 
 		if not self.checkTool("sqlitebrowser"):
-			self.installDBrowser()
+			self.installer.installDBrowserLinux()
 			if not self.checkTool("sqlitebrowser"):
 				raise InstallException("Please, manually install the following tool: sqlitebrowser")
+
+		return True
+
+	def checkAndInstallWindows(self):
+		if not self.checkTool("runenergyplys"):
+			self.installer.installEplusLinux()
+			if not self.checkTool("runenergyplus"):
+				raise InstallException("Please, manually install the following tool: EnergyPlus")
+
+		if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
+			self.installer.installDBrowserWindows()
+			if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
+				raise InstallException("Please, manually install the following tool: sqlitebrowser")
+
+		return True
+
