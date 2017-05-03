@@ -1,4 +1,3 @@
-import test
 from model.platformManager import PlatformManager
 from test.testPlatformManager import TestPlatformManager
 
