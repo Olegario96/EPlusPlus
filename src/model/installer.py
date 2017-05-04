@@ -16,7 +16,7 @@ class Installer(object):
 	def installEplusWindows(self):
 		url = "https://github.com/NREL/EnergyPlus/releases/download/v8.7.0/Energyplus-8.7.0-78a111df4a-Windows-x86_64.exe"
 		filename = "EnergyPlusInstaller.exe"
-		urllib.urlretrieve(url, filename)
+		urllib.request.urlretrieve(url, filename)
 		path = os.path.abspath("EnergyPlusInstaller.exe")
 		subprocess.call([path])
 
