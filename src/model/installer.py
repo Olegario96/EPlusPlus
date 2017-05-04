@@ -1,6 +1,6 @@
 import os
 import subprocess
-import urllib
+import urllib.request
 
 class Installer(object):
 	"""docstring for Installer"""
