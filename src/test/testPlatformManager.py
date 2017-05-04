@@ -1,5 +1,5 @@
 import unittest
-from model.platformManager import PlatformManager
+from eplusplus.model.platformManager import PlatformManager
 
 class TestPlatformManager(unittest.TestCase):
 	def testCheckAndInstallLinux(self, pM):

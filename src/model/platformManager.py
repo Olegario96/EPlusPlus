@@ -2,8 +2,8 @@ import os
 import signal
 import subprocess
 import platform
-from  exception.installException import InstallException
-from model.installer import Installer
+from eplusplus.exception.installException import InstallException
+from .installer import Installer
 
 class PlatformManager(object):
 	"""docstring for PlatformManager"""
