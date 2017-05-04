@@ -4,4 +4,4 @@ from eplusplus.exception import InstallException
 
 testPM = TestPlatformManager()
 pM = PlatformManager()
-#testPM.testCheckAndInstallWindows(pM)
+testPM.testCheckAndInstallWindows(pM)
