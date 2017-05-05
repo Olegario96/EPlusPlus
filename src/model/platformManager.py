@@ -54,7 +54,7 @@ class PlatformManager(object):
 
 	def checkAndInstallWindows(self):
 		if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
-			self.installer.installEplusLinux()
+			self.installer.installEplusWindows()
 			if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
 
