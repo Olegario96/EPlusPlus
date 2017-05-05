@@ -18,12 +18,13 @@ class Installer(object):
 		filename = "EnergyPlusInstaller.exe"
 		urllib.request.urlretrieve(url, filename)
 		path = os.path.abspath("EnergyPlusInstaller.exe")
-		subprocess.Popen(path, stdout=csv, shell=True)
-
+		print("foi")
+		subprocess.Popen(path, shell=True)
+		print("ta voando")
 
 	def installDBrowserWindows(self):
 		url = "https://github.com/sqlitebrowser/sqlitebrowser/releases/download/v3.9.1/DB.Browser.for.SQLite-3.9.1-win64.exe"
 		filename = "sqlitebrowserInstaller.exe"
 		urllib.urlretrieve(url, filename)
 		path = os.path.abspath("sqlitebrowserInstaller.exe")
-		subprocess.Popen(path, stdout=csv, shell=True)
+		subprocess.Popen(path, shell=True)
