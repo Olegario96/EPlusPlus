@@ -21,14 +21,16 @@ class PlatformManager(object):
 		return platform.system() == "Darwin"
 
 	def checkTool(self, exc):
-		try:
-			process = subprocess.Popen(exc, shell=True)
-			process.kill()
-			return True
-		except OSError as error:
-			if error.errno == os.errno.ENOENT:
+		absPath = os.path.abspath(exc)
+		if os.path.isfile(absPath):
+			try:
+				process = subprocess.Popen(exc, shell=True)
+				process.kill()
+				return True
+			except:
 				return False
-		return False
+		else:
+			return False
 
 
 	def checkAndInstall(self):
