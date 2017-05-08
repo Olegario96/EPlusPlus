@@ -28,6 +28,7 @@ class PlatformManager(object):
 		except OSError as error:
 			if error.errno == os.errno.ENOENT:
 				return False
+		return False
 
 
 	def checkAndInstall(self):
