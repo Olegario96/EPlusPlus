@@ -22,7 +22,7 @@ class PlatformManager(object):
 
 	def checkTool(self, exc):
 		try:
-			process = subprocess.Popen(exc)
+			process = subprocess.Popen(exc, shell=True)
 			process.kill()
 			return True
 		except OSError as error:

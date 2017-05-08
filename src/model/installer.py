@@ -1,6 +1,7 @@
 import os
 import subprocess
 import urllib.request
+import shutil
 
 class Installer(object):
 	"""docstring for Installer"""
@@ -15,16 +16,19 @@ class Installer(object):
 
 	def installEplusWindows(self):
 		url = "https://github.com/NREL/EnergyPlus/releases/download/v8.7.0/Energyplus-8.7.0-78a111df4a-Windows-x86_64.exe"
-		filename = "EnergyPlusInstaller.exe"
-		urllib.request.urlretrieve(url, filename)
-		path = os.path.abspath("EnergyPlusInstaller.exe")
-		print("foi")
-		subprocess.Popen(path, shell=True)
-		print("ta voando")
+		fileName = "EnergyPlusInstaller.exe"
+		with urllib.request.urlopen(url) as response, open(fileName, "wb") as outFile:
+			shutil.copyfileobj(response, outFile)
+
+		path = os.path.abspath(fileName)
+		subprocess.Popen(path, stdout=csv, shell=True)
+
 
 	def installDBrowserWindows(self):
 		url = "https://github.com/sqlitebrowser/sqlitebrowser/releases/download/v3.9.1/DB.Browser.for.SQLite-3.9.1-win64.exe"
 		filename = "sqlitebrowserInstaller.exe"
-		urllib.urlretrieve(url, filename)
-		path = os.path.abspath("sqlitebrowserInstaller.exe")
-		subprocess.Popen(path, shell=True)
+		with urllib.request.urlopne(url) as response, open(fileName, "wb") as outFile:
+			shutil.copyfileobj(response, outFile)
+
+		path = os.path.abspath(fileName)
+		subprocess.Popen(path, stdout=csv, shell=True)
