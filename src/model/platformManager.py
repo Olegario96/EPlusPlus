@@ -60,6 +60,8 @@ class PlatformManager(object):
 			self.installer.installEplusWindows()
 			if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
+		else:
+			print("what")
 
 		if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
 			self.installer.installDBrowserWindows()
