@@ -21,7 +21,7 @@ class Installer(object):
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
-		subprocess.Popen(path, stdout=csv, shell=True)
+		subprocess.Popen(path, shell=True)
 
 
 	def installDBrowserWindows(self):
@@ -31,4 +31,4 @@ class Installer(object):
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
-		subprocess.Popen(path, stdout=csv, shell=True)
+		subprocess.Popen(path, shell=True)
