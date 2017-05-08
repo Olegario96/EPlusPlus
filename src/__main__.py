@@ -4,4 +4,5 @@ from eplusplus.exception import InstallException
 
 testPM = TestPlatformManager()
 pM = PlatformManager()
-testPM.testCheckAndInstallWindows(pM)
+print("test main")
+testPM.testCheckAndInstallLinux(pM)
