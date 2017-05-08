@@ -17,6 +17,7 @@ class Installer(object):
 	def installEplusWindows(self):
 		url = "https://github.com/NREL/EnergyPlus/releases/download/v8.7.0/Energyplus-8.7.0-78a111df4a-Windows-x86_64.exe"
 		fileName = "EnergyPlusInstaller.exe"
+		print("test")
 		with urllib.request.urlopen(url) as response, open(fileName, "wb") as outFile:
 			shutil.copyfileobj(response, outFile)
 
