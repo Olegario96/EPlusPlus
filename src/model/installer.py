@@ -27,7 +27,7 @@ class Installer(object):
 
 	def installDBrowserWindows(self):
 		url = "https://github.com/sqlitebrowser/sqlitebrowser/releases/download/v3.9.1/DB.Browser.for.SQLite-3.9.1-win64.exe"
-		filename = "sqlitebrowserInstaller.exe"
+		fileName = "sqlitebrowserInstaller.exe"
 		with urllib.request.urlopen(url) as response, open(fileName, "wb") as outFile:
 			shutil.copyfileobj(response, outFile)
 
