@@ -39,7 +39,6 @@ class PlatformManager(object):
 		elif self.isLinux():
 			return self.checkAndInstallLinux()
 		else:
-			print("test checkAndInstall")
 			return self.checkAndInstallWindows()
 
 
@@ -58,12 +57,9 @@ class PlatformManager(object):
 
 	def checkAndInstallWindows(self):
 		if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
-			print("test checkAndInstallWindows")
 			self.installer.installEplusWindows()
 			if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
-		else:
-			print("what")
 
 		if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
 			self.installer.installDBrowserWindows()
