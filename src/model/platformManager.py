@@ -64,6 +64,7 @@ class PlatformManager(object):
 	##
 	##
 	## @param      self  The object
+	##
 	## @param      exc   Path to the executable
 	##
 	## @return     Return true if the program is installed on the machine, and
@@ -88,6 +89,7 @@ class PlatformManager(object):
 	##             return true. False, otherwise.
 	##
 	## @param      self  Non static method
+	##
 	## @param      exc   The nome of program on the shell
 	##
 	## @return     Return true if the tool is installed, false otherwise.
