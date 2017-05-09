@@ -20,7 +20,7 @@ class PlatformManager(object):
 	def isOSX(self):
 		return platform.system() == "Darwin"
 
-	def checkTool(self, exc):
+	def checkToolWindows(self, exc):
 		absPath = os.path.abspath(exc)
 		if os.path.isfile(absPath):
 			try:
@@ -32,6 +32,13 @@ class PlatformManager(object):
 		else:
 			return False
 
+	def checkToolLinux(self, exc):
+		try:
+			process = subprocess.Popen(exc, shell=True)
+			process.kill()
+			return True
+		except:
+			return False
 
 	def checkAndInstall(self):
 		if self.isOSX():
@@ -45,27 +52,27 @@ class PlatformManager(object):
 
 
 	def checkAndInstallLinux(self):
-		if not self.checkTool("runenergyplus"):
+		if not self.checkToolLinux("runenergyplus"):
 			self.installer.installEplusLinux()
-			if not self.checkTool("runenergyplus"):
+			if not self.checkToolLinux("runenergyplus"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
 
-		if not self.checkTool("sqlitebrowser"):
+		if not self.checkToolLinux("sqlitebrowser"):
 			self.installer.installDBrowserLinux()
-			if not self.checkTool("sqlitebrowser"):
+			if not self.checkToolLinux("sqlitebrowser"):
 				raise InstallException("Please, manually install the following tool: sqlitebrowser")
 
 		return True
 
 	def checkAndInstallWindows(self):
-		if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
+		if not self.checkToolWindows("C:\EnergyPlusV8-7-0\energyplus.exe"):
 			self.installer.installEplusWindows()
-			if not self.checkTool("C:\EnergyPlusV8-7-0\energyplus.exe"):
+			if not self.checkToolWindows("C:\EnergyPlusV8-7-0\energyplus.exe"):
 				raise InstallException("Please, manually install the following tool: EnergyPlus")
 
-		if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
+		if not self.checkToolWindows("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
 			self.installer.installDBrowserWindows()
-			if not self.checkTool("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
+			if not self.checkToolWindows("C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"):
 				raise InstallException("Please, manually install the following tool: sqlitebrowser")
 
 		return True
