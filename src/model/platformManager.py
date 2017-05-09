@@ -38,8 +38,10 @@ class PlatformManager(object):
 			return self.checkAndInstallOSX()
 		elif self.isLinux():
 			return self.checkAndInstallLinux()
-		else:
+		elif self.isWindows():
 			return self.checkAndInstallWindows()
+		else:
+			return False
 
 
 	def checkAndInstallLinux(self):
