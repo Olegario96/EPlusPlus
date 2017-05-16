@@ -74,7 +74,8 @@ class Statiscal(object):
 	##
 	def lhsValues(self, sample, numSamples):
 		lhsValuesFinal = []
-		lhsValues = [sample[x:x+numSamples] for x in range(0, len(sample), numSamples)]
+		factor = float(len(sample))/numSamples
+		lhsValues = [sample[int(factor*i):int(factor*(i+1))] for i in range(numSamples)]
 
 		for element in lhsValues:
 			lhsValuesFinal.append(self.randomValue(element))
