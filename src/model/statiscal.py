@@ -1,11 +1,12 @@
 import random
+from pyDOE import lhs
 
 ##
 ## @brief      Class for statiscal. This class is responsible for implements
 ##             the sampling methods. The eplusplus software at the first version
-##             will support only the random sampling (i.e. Monte Carlo) and the
-##             Latin Hypercube Sampling method. The import random is used to
-##             sorte random falues from the lists.
+##             will support only the random sampling and the Latin Hypercube
+##             Sampling method using "pyDOE" lib. The import random is used to
+##             sort random falues from the lists.
 ##
 class Statiscal(object):
 
@@ -52,66 +53,84 @@ class Statiscal(object):
 
 		return sampleFinal
 
-	##
-	## @brief      This method is a implementation of a simplificated version of
-	##             the Latin Hypercube Sampling method. The method, basically,
-	##             consists on split the the "sample" into "n" groups and
-	##             randomly choose a value from each group. So if we have a
-	##             "sample" with 5 values and we want a "numSamples" of 2 this
-	##             method will split our "sample" into 3 lists being 2 with 2
-	##             values and one with just one value. After that, for each
-	##             list that we generate, we choose a random number and insert
-	##             into a new list. At the end, we just return this list.
-	##
-	## @param      self       Non static method
-	## @param      sample     List with the values from where we will take
-	##                        the values aplying the LHS method.
-	## @param      numSamples Number of values that we wanna choose from the
-	##                        "sample" using the LHS method.
-	##
-	## @return     Return the values taken from the "sample" after aply the
-	##             LHS method.
-	##
-	def lhsValues(self, sample, numSamples):
-		lhsValuesFinal = []
-		factor = float(len(sample))/numSamples
-		lhsValues = [sample[int(factor*i):int(factor*(i+1))] for i in range(numSamples)]
-
-		for element in lhsValues:
-			lhsValuesFinal.append(self.randomValue(element))
-
-		return lhsValuesFinal
 
 	##
-	## @brief      This method take the columns received from the
-	##             "columnsToLists" method from the class "FileManager"
-	##             and then apply a sampling method on the the list based on the
-	##             number of samples. For example, if we have a sample with 5
-	##             values and the "numSamples" is equal to 3, this means that
-	##             after apply the sampling method we will have a list with 3
-	##             values choosed from the inital sample.
+	## @brief      This method refers to the Hypercube Latin Sampling.
+	##             It uses the pyDOE library to do the sampling. This method
+	##             is to complex to explain here. Please, search on the internet
+	##             for more information to learn about it.
 	##
-	## @param      self        Non static method
-	## @param      sample     Columns returned from the "columnsToLists"
-	##                         method. See its documentation for more info.
+	## @param      self            Non static method
+	## @param      possibleValues  A dictionary (Hash Table) with the number
+	##                             of entries equals to the number of variables
+	##                             which maps to a list with all possible
+	##                             values of that variable.
+	## @param      sampleSize      Number of data (sample) that the user wants.
 	##
-	## @param      numSamples  Number of values that the user wants from the
-	##                         the sample. If this value is equal to 2, then
-	##                         the returned sample will have 2 elements. If 3,
-	##                         will return a list of 3 and so go on.
+	## @return     Returns a matrix sampleSize x len(possibleValues). This
+	##             matrix contains values from 0 to 1 that will be mapped to
+	##             our set of variables
 	##
-	## @param      method      Method choosed by the user to apply the sampling
-	##                         method. In the first version of the eplusplus can
-	##                         be just two values: RANDOM or LHS.
-	##
-	## @return     The values returned from the sampling method applied. The
-	##             length of the list must be equal to the "numSamples" value.
-	##
-	def calculateNewValues(self, sample, numSamples, method):
-		for i in range(0, len(sample)):
-			if method == "LHS":
-				sample[i] = self.statiscal.lhsValues(sample[i], numSamples)
-			elif method == "RANDOM":
-				sample[i] = self.statiscal.randomValues(sample[i], numSamples)
+	def lhsValues(self, possibleValues, sampleSize):
+		lhd = lhs(len(possibleValues), samples=sampleSize)
 
-		return sample
+		return lhd
+
+	##
+	## @brief      This method map a continuous value to a discrete one.
+	##             We apply this method to every value in our dictionary that
+	##             contains all possible values supplied by the user. This allow
+	##             to have a consistent sample.
+	##
+	## @param      value         The continous value that will use as baseline.
+	## @param      discrete      The discrete value that we want to map.
+	##
+	## @return    Returns the next discrete value.
+	##
+	def discrete(self, value, discrete):
+	    diff = 1/discrete
+	    total=diff
+	    i=1
+	    while (total<value):
+	        i+=1
+	        total+=diff
+	    return i
+
+	##
+	## @brief      This method creates a list of lists which number of lists
+	##             is equal to "sampleSize". Each list has a value for each
+	##             variable, creating a possibility, among all. For do this
+	##             we take the values created from the "lhs" method and map
+	##             the values to our values taken from CSV using the "discrete"
+	##             function (see its documentation for more info). Each list
+	##             has a size equal to the number of variable in each item
+	##             of this list has a value from the csv that represents that
+	##             column.
+	##
+	## @param      self            Non static method.
+	## @param      lhd             Matrix samplesSize x len(possibleValues)
+	##                             with values from the "lhs" method. See its
+	##                             documentation for more info.
+	##
+	## @param      possibleValues  A dictionary (Hash Table) with the number
+	##                             of entries equals to the number of variables
+	##                             which maps to a list with all possible
+	##                             values of that variable.
+	##
+	## @param      sampleSize      Number of possibilities that the user wants.
+	##
+	## @return     A list of lists containing the continous values mapped
+	##             to values of variable which came from the csv informed
+	##             by the user.
+	##
+	def mapValues(self, lhd, possibleValues, sampleSize):
+		mappedValues = []
+		for i in range(0, sampleSize):
+			chosenValues = []
+			for j in range(0, len(possibleValues)):
+				column = int(self.discrete(lhd[i][j],len(possibleValues[j])))-1
+				values = str(possibleValues[j][column])
+				chosenValues.append(values)
+			mappedValues.append(chosenValues)
+
+		return mappedValues
