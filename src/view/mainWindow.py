@@ -1,44 +1,56 @@
 import os
 import sys
+from lineEditDialog import LineEditDialog
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QLabel, QLineEdit
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit
+from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.firstTime = True
 
+        self.firstTime = True
         self.logo = QLabel()
+
         self.casesButton = QPushButton("Gerar casos")
         self.simulationButton = QPushButton("Executar simulação") 
         self.confirmButton = QPushButton("Confirmar")
         self.cancelButton = QPushButton("Cancelar")
-        self.lineIdf = QLineEdit()
-        self.vLayout = QVBoxLayout()
+        self.chooseIdfButton = QPushButton("Escolher arquivo...")
+        self.chooseCSVButton = QPushButton("Escolher arquivo...")
+        self.chooseFolderButton = QPushButton("Escolher pasta...")
+
+        self.lineIdf = LineEditDialog(self)
+        self.lineCsv = LineEditDialog(self)
+        self.lineFolder = LineEditDialog(self)
+
+        self.gridLayout = QGridLayout()
         self.initComponents()
 
     def initComponents(self):
         self.casesButton.clicked.connect(self.casesButtonClicked)
         self.cancelButton.clicked.connect(self.cancelButtonClicked)
+        self.chooseIdfButton.clicked.connect(self.chooseIdfClicked)
+        self.chooseCSVButton.clicked.connect(self.chooseCsvClicked)
+        self.chooseFolderButton.clicked.connect(self.chooseFolderClicked)
 
         pixmap = QPixmap("logo.png")
         self.logo.setPixmap(pixmap)
 
-        self.vLayout.addWidget(self.logo)
-        self.vLayout.addWidget(self.casesButton)
-        self.vLayout.addWidget(self.simulationButton)
+        self.gridLayout.addWidget(self.logo, 0, 0)
+        self.gridLayout.addWidget(self.casesButton, 1, 0)
+        self.gridLayout.addWidget(self.simulationButton, 2, 0)
 
         if self.firstTime:
             self.firstTime = False
-            self.setLayout(self.vLayout)
-            self.setFixedSize(300, 200)
+            self.setLayout(self.gridLayout)
+            self.setFixedSize(470, 300)
             self.setWindowTitle("EPlusPlus")
             self.show()
 
     def casesButtonClicked(self):
-        for component in reversed(range(self.vLayout.count())):
-            self.vLayout.itemAt(component).widget().setParent(None)
+        self.removeAll()
 
         idfLabel = QLabel()
         csvLabel = QLabel()
@@ -48,28 +60,52 @@ class MainWindow(QWidget):
         csvLabel.setText("Arquivo de configuração CSV:")
         folderStoreLabel.setText("Pasta para salvar os arquivos CSV's:")
 
-        self.lineIdf.returnPressed.connect(self.lineIdfClicked)
+        self.gridLayout.addWidget(idfLabel, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.chooseIdfButton, 1, 1)
+        self.gridLayout.addWidget(self.lineIdf, 1, 2)
 
-        self.vLayout.addWidget(idfLabel)
-        self.vLayout.addWidget(self.lineIdf)
-        self.vLayout.addWidget(csvLabel)
-        self.vLayout.addWidget(folderStoreLabel)
-        self.vLayout.addWidget(self.confirmButton)
-        self.vLayout.addWidget(self.cancelButton)
+        self.gridLayout.addWidget(csvLabel, 2, 0)
+        self.gridLayout.addWidget(self.chooseCSVButton, 2, 1)
+        self.gridLayout.addWidget(self.lineCsv, 2, 2)
 
-    def lineIdfClicked(self):
-        print(1)
+        self.gridLayout.addWidget(folderStoreLabel, 3, 0)
+        self.gridLayout.addWidget(self.chooseFolderButton, 3, 1)
+        self.gridLayout.addWidget(self.lineFolder, 3, 2)
+
+        self.gridLayout.addWidget(self.confirmButton, 4, 0, 1, 3)
+        self.gridLayout.addWidget(self.cancelButton, 5, 0, 1, 3)
+
+    def chooseIdfClicked(self):
+        msg = "Escolha o arquivo idf"
+        filename = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.idf")
+        self.setLineIdfText(filename[0])    
+
+    def chooseCsvClicked(self):
+        msg = "Escolha o arquivo base csv"
+        filename = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.csv")
+        self.setLineFolderText(filename[0])
+
+    def chooseFolderClicked(self):
+        msg = "Escolha a pasta para salvar os arquivos IDF's"
+        folder = QFileDialog.getExistingDirectory(self, msg, os.getenv("HOME"))
+        self.setLineFolderText(folder)
 
     def cancelButtonClicked(self):
-        for component in reversed(range(self.vLayout.count())):
-            self.vLayout.itemAt(component).widget().setParent(None)
-
+        self.removeAll()
         self.initComponents()
 
-    def mousePressEventIdf(self, event):
-        super(self.lineIdf, self).mousePressedEvent(event)
-        if event.button() == "QtCore.Qt.LeftButton":
-            pass
+    def removeAll(self):
+        for component in reversed(range(self.gridLayout.count())):
+            self.gridLayout.itemAt(component).widget().setParent(None)
+
+    def setLineIdfText(self, string):
+        self.lineIdf.setText(string)
+
+    def setLineCsvText(self, string):
+        self.lineCsv.setText(string)
+
+    def setLineFolderText(self, string):
+        self.lineFolder.setText(string)
 
 app = QApplication(sys.argv)
 mainWindow = MainWindow()
