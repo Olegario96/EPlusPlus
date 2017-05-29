@@ -1,10 +1,11 @@
 import os
 import sys
 from lineEditDialog import LineEditDialog
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit
-from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
+from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QRadioButton
+from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -20,10 +21,17 @@ class MainWindow(QWidget):
         self.chooseIdfButton = QPushButton("Escolher arquivo...")
         self.chooseCSVButton = QPushButton("Escolher arquivo...")
         self.chooseFolderButton = QPushButton("Escolher pasta...")
+        
+        # appIcon = QIcon()
+        # appIcon.addFile("logo.png", QSize(16,16))
+        # self.setWindowIcon(appIcon)
 
         self.lineIdf = LineEditDialog(self)
         self.lineCsv = LineEditDialog(self)
         self.lineFolder = LineEditDialog(self)
+
+        self.lhsRB = QRadioButton("Latin Hypercube Sampling")
+        self.randomRB = QRadioButton("Random")
 
         self.gridLayout = QGridLayout()
         self.initComponents()
@@ -37,6 +45,8 @@ class MainWindow(QWidget):
         self.gridLayout.addWidget(self.simulationButton, 2, 0)
 
         if self.firstTime:
+            self.firstTime = False
+
             self.casesButton.clicked.connect(self.casesButtonClicked)
             self.cancelButton.clicked.connect(self.cancelButtonClicked)
             self.confirmButton.clicked.connect(self.confirmButtonClicked)
@@ -44,9 +54,8 @@ class MainWindow(QWidget):
             self.chooseCSVButton.clicked.connect(self.chooseCsvClicked)
             self.chooseFolderButton.clicked.connect(self.chooseFolderClicked)
 
-            self.firstTime = False
             self.setLayout(self.gridLayout)
-            self.setFixedSize(470, 300)
+            self.setFixedSize(470, 230)
             self.setWindowTitle("EPlusPlus")
             self.show()
 
@@ -56,25 +65,31 @@ class MainWindow(QWidget):
         idfLabel = QLabel()
         csvLabel = QLabel()
         folderStoreLabel = QLabel()
+        methodSamplingLabel = QLabel(self)
 
         idfLabel.setText("Arquivo base idf:")
         csvLabel.setText("Arquivo de configuração CSV:")
         folderStoreLabel.setText("Pasta para salvar os arquivos CSV's:")
+        methodSamplingLabel.setText("Método de amostragem")
 
-        self.gridLayout.addWidget(idfLabel, 1, 0, 1, 2)
+        self.gridLayout.addWidget(idfLabel, 1, 0, Qt.AlignRight)
         self.gridLayout.addWidget(self.chooseIdfButton, 1, 1)
         self.gridLayout.addWidget(self.lineIdf, 1, 2)
 
-        self.gridLayout.addWidget(csvLabel, 2, 0)
+        self.gridLayout.addWidget(csvLabel, 2, 0, Qt.AlignRight)
         self.gridLayout.addWidget(self.chooseCSVButton, 2, 1)
         self.gridLayout.addWidget(self.lineCsv, 2, 2)
 
-        self.gridLayout.addWidget(folderStoreLabel, 3, 0)
+        self.gridLayout.addWidget(folderStoreLabel, 3, 0, Qt.AlignRight)
         self.gridLayout.addWidget(self.chooseFolderButton, 3, 1)
         self.gridLayout.addWidget(self.lineFolder, 3, 2)
 
-        self.gridLayout.addWidget(self.confirmButton, 4, 0, 1, 3)
-        self.gridLayout.addWidget(self.cancelButton, 5, 0, 1, 3)
+        self.gridLayout.addWidget(methodSamplingLabel, 4, 1, Qt.AlignBottom)
+        self.gridLayout.addWidget(self.randomRB, 5, 0, Qt.AlignTop)
+        self.gridLayout.addWidget(self.lhsRB, 5, 2, Qt.AlignTop)
+
+        self.gridLayout.addWidget(self.confirmButton, 6, 0, 1, 3, Qt.AlignTop)
+        self.gridLayout.addWidget(self.cancelButton, 7, 0, 1, 3, Qt.AlignTop)
 
     def chooseIdfClicked(self):
         msg = "Escolha o arquivo idf"
@@ -93,15 +108,12 @@ class MainWindow(QWidget):
 
     def cancelButtonClicked(self):
         self.removeAll()
-        self.setLineIdfText("")
-        self.setLineCsvText("")
-        self.setLineFolderText("")
         self.initComponents()
 
     def confirmButtonClicked(self):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Warning)
-        msgBox.setWindowTitle("EPlusPlus-WARNING")
+        msgBox.setWindowTitle("EPlusPlus-WAR")
         msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
 
         if self.lineIdf.text() == "":
@@ -116,6 +128,10 @@ class MainWindow(QWidget):
     def removeAll(self):
         for component in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(component).widget().setParent(None)
+
+        self.setLineIdfText("")
+        self.setLineCsvText("")
+        self.setLineFolderText("")
 
     def setLineIdfText(self, string):
         self.lineIdf.setText(string)
