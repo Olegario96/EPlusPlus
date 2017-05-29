@@ -1,50 +1,76 @@
+import os
 import sys
-from PyQt5.QtWidgets import (QLineEdit, QSlider, QPushButton, QVBoxLayout)
-from PyQt5.QtWidgets import (QApplication, QWidget)
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QLabel, QLineEdit
+from PyQt5.QtGui import QPixmap, QIcon
 
 class MainWindow(QWidget):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.firstTime = True
 
-	def __init__(self):
-		super().__init__()
-		self.initUI()
+        self.logo = QLabel()
+        self.casesButton = QPushButton("Gerar casos")
+        self.simulationButton = QPushButton("Executar simulação") 
+        self.confirmButton = QPushButton("Confirmar")
+        self.cancelButton = QPushButton("Cancelar")
+        self.lineIdf = QLineEdit()
+        self.vLayout = QVBoxLayout()
+        self.initComponents()
 
-	def initUI(self):
-		self.textField = QLineEdit()
-		self.button1 = QPushButton("Clear")
-		self.button2 = QPushButton("Print")
-		self.slider = QSlider(Qt.Horizontal)
-		self.slider.setMinimum(1)
-		self.slider.setMaximum(99)
-		self.slider.setValue(25)
-		self.slider.setTickInterval(10)
-		self.slider.setTickPosition(QSlider.TicksBelow)
+    def initComponents(self):
+        self.casesButton.clicked.connect(self.casesButtonClicked)
+        self.cancelButton.clicked.connect(self.cancelButtonClicked)
 
-		vBox = QVBoxLayout()
-		vBox.addWidget(self.textField)
-		vBox.addWidget(self.button1)
-		vBox.addWidget(self.button2)
-		vBox.addWidget(self.slider)
+        pixmap = QPixmap("logo.png")
+        self.logo.setPixmap(pixmap)
 
-		self.setLayout(vBox)
-		self.setWindowTitle("EPlusPlus")
+        self.vLayout.addWidget(self.logo)
+        self.vLayout.addWidget(self.casesButton)
+        self.vLayout.addWidget(self.simulationButton)
 
-		self.button1.clicked.connect(lambda: self.btnClick(self.button1, "Hello from Clear"))
-		self.button2.clicked.connect(lambda: self.btnClick(self.button2, "Hello from Print"))
-		self.slider.valueChanged.connect(self.vChange)
+        if self.firstTime:
+            self.firstTime = False
+            self.setLayout(self.vLayout)
+            self.setFixedSize(300, 200)
+            self.setWindowTitle("EPlusPlus")
+            self.show()
 
-		self.show()
+    def casesButtonClicked(self):
+        for component in reversed(range(self.vLayout.count())):
+            self.vLayout.itemAt(component).widget().setParent(None)
 
-	def btnClick(self, b, string):
-		if b.text() == "Print":
-			print(self.textField.text())
-		else:
-			self.le.clear()
+        idfLabel = QLabel()
+        csvLabel = QLabel()
+        folderStoreLabel = QLabel()
 
-	def vChange(self):
-		value = str(self.slider.value())
-		self.le.setText(value)
+        idfLabel.setText("Arquivo base idf:")
+        csvLabel.setText("Arquivo de configuração CSV:")
+        folderStoreLabel.setText("Pasta para salvar os arquivos CSV's:")
+
+        self.lineIdf.returnPressed.connect(self.lineIdfClicked)
+
+        self.vLayout.addWidget(idfLabel)
+        self.vLayout.addWidget(self.lineIdf)
+        self.vLayout.addWidget(csvLabel)
+        self.vLayout.addWidget(folderStoreLabel)
+        self.vLayout.addWidget(self.confirmButton)
+        self.vLayout.addWidget(self.cancelButton)
+
+    def lineIdfClicked(self):
+        print(1)
+
+    def cancelButtonClicked(self):
+        for component in reversed(range(self.vLayout.count())):
+            self.vLayout.itemAt(component).widget().setParent(None)
+
+        self.initComponents()
+
+    def mousePressEventIdf(self, event):
+        super(self.lineIdf, self).mousePressedEvent(event)
+        if event.button() == "QtCore.Qt.LeftButton":
+            pass
 
 app = QApplication(sys.argv)
-window = MainWindow()
+mainWindow = MainWindow()
 sys.exit(app.exec_())
