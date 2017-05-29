@@ -29,12 +29,6 @@ class MainWindow(QWidget):
         self.initComponents()
 
     def initComponents(self):
-        self.casesButton.clicked.connect(self.casesButtonClicked)
-        self.cancelButton.clicked.connect(self.cancelButtonClicked)
-        self.chooseIdfButton.clicked.connect(self.chooseIdfClicked)
-        self.chooseCSVButton.clicked.connect(self.chooseCsvClicked)
-        self.chooseFolderButton.clicked.connect(self.chooseFolderClicked)
-
         pixmap = QPixmap("logo.png")
         self.logo.setPixmap(pixmap)
 
@@ -43,6 +37,13 @@ class MainWindow(QWidget):
         self.gridLayout.addWidget(self.simulationButton, 2, 0)
 
         if self.firstTime:
+            self.casesButton.clicked.connect(self.casesButtonClicked)
+            self.cancelButton.clicked.connect(self.cancelButtonClicked)
+            self.confirmButton.clicked.connect(self.confirmButtonClicked)
+            self.chooseIdfButton.clicked.connect(self.chooseIdfClicked)
+            self.chooseCSVButton.clicked.connect(self.chooseCsvClicked)
+            self.chooseFolderButton.clicked.connect(self.chooseFolderClicked)
+
             self.firstTime = False
             self.setLayout(self.gridLayout)
             self.setFixedSize(470, 300)
@@ -83,7 +84,7 @@ class MainWindow(QWidget):
     def chooseCsvClicked(self):
         msg = "Escolha o arquivo base csv"
         filename = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.csv")
-        self.setLineFolderText(filename[0])
+        self.setLineCsvText(filename[0])
 
     def chooseFolderClicked(self):
         msg = "Escolha a pasta para salvar os arquivos IDF's"
@@ -92,7 +93,25 @@ class MainWindow(QWidget):
 
     def cancelButtonClicked(self):
         self.removeAll()
+        self.setLineIdfText("")
+        self.setLineCsvText("")
+        self.setLineFolderText("")
         self.initComponents()
+
+    def confirmButtonClicked(self):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowTitle("EPlusPlus-WARNING")
+        msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
+
+        if self.lineIdf.text() == "":
+            msgBox.exec_()
+        elif self.lineCsv.text() == "":
+            msgBox.exec_()
+        elif self.lineFolder.text() == "":
+            msgBox.exec_()
+        else:
+            print("dale")
 
     def removeAll(self):
         for component in reversed(range(self.gridLayout.count())):
@@ -107,6 +126,6 @@ class MainWindow(QWidget):
     def setLineFolderText(self, string):
         self.lineFolder.setText(string)
 
-app = QApplication(sys.argv)
+app = QApplication(list(sys.argv))
 mainWindow = MainWindow()
 sys.exit(app.exec_())
