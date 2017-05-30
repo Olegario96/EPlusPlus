@@ -53,7 +53,6 @@ class Statiscal(object):
 
 		return sampleFinal
 
-
 	##
 	## @brief      This method refers to the Hypercube Latin Sampling.
 	##             It uses the pyDOE library to do the sampling. This method
