@@ -1,6 +1,6 @@
 import os
-import sys
-from lineEditDialog import LineEditDialog
+from .lineEditDialog import LineEditDialog
+from eplusplus.controller import ActorUser
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
@@ -15,13 +15,13 @@ class MainWindow(QWidget):
         self.logo = QLabel()
 
         self.casesButton = QPushButton("Gerar casos")
-        self.simulationButton = QPushButton("Executar simulação") 
+        self.simulationButton = QPushButton("Executar simulação")
         self.confirmButton = QPushButton("Confirmar")
         self.cancelButton = QPushButton("Cancelar")
         self.chooseIdfButton = QPushButton("Escolher arquivo...")
         self.chooseCSVButton = QPushButton("Escolher arquivo...")
         self.chooseFolderButton = QPushButton("Escolher pasta...")
-        
+
         # appIcon = QIcon()
         # appIcon.addFile("logo.png", QSize(16,16))
         # self.setWindowIcon(appIcon)
@@ -94,7 +94,7 @@ class MainWindow(QWidget):
     def chooseIdfClicked(self):
         msg = "Escolha o arquivo idf"
         filename = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.idf")
-        self.setLineIdfText(filename[0])    
+        self.setLineIdfText(filename[0])
 
     def chooseCsvClicked(self):
         msg = "Escolha o arquivo base csv"
@@ -141,7 +141,3 @@ class MainWindow(QWidget):
 
     def setLineFolderText(self, string):
         self.lineFolder.setText(string)
-
-app = QApplication(list(sys.argv))
-mainWindow = MainWindow()
-sys.exit(app.exec_())
