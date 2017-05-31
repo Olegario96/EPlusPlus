@@ -118,3 +118,5 @@ class FileManager(object):
 					idfWriter.writerow(line)
 
 			i += 1
+
+		os.remove(csvFile)
