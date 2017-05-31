@@ -1,7 +1,7 @@
-from eplusplus.model import PlatformManager
-from eplusplus.test import TestPlatformManager
-from eplusplus.exception import InstallException
+import sys
+from PyQt5.QtWidgets import QApplication
+from eplusplus.view import MainWindow
 
-testPM = TestPlatformManager()
-pM = PlatformManager()
-testPM.testCheckAndInstallLinux(pM)
+app = QApplication(list(sys.argv))
+mainWindow = MainWindow()
+sys.exit(app.exec_())
