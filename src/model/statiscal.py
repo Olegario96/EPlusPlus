@@ -25,33 +25,42 @@ class Statiscal(object):
 	def randomValue(self, sample):
 		return random.choice(sample)
 
+
 	##
-	## @brief      This method receive as argument a list with values and the
-	##             number of values that we want to choose randomly. The method
-	##             create a variable to control the the "while" loop and a list
-	##             to apend the values that were randomly choose. After choose
-	##             the values, just return the list.
+	## @brief      This method receives a dictionary and the number of samples
+	##             that user wants. So it creates a matrix of samplesSize x
+	##             len(possibleValues). At this matrix every column represents
+	##             one variable of the variables and tis value is randomly
+	##             choosed from the the list of all possible values.
 	##
-	## @param      self        Non static method
-	## @param      sample      List with the values that we wanna randomly
-	##                         choose.
+	## @param      self            Non static mehotd
+	## @param      possibleValues  A dictionary (Hash Table) with the number
+	##                             of entries equals to the number of variables
+	##                             which maps to a list with all possible
+	##                             values of that variable.
+	## @param      sampleSize      Number of data (sample) that the user wants.
 	##
-	## @param      numSamples  Number of how many values we wanna randomly
-	##                         choose. For example: if we have a list with 5
-	##                         values and we want 3 random values we pass the
-	##                         list as "sample" and the "numSamples" as 3.
+	## @return     Returns a matrix sampleSize x len(possibleValues). Each line
+	##             contains one value from the list inside the hash table that
+	##             was randomly choosed.
 	##
-	## @return     Return a list with all the values that were randomly choose.
-	##             The list has a length equals to the "numSamples".
-	##
-	def randomValues(self, sample, numSamples):
+	def randomValues(self, possibleValues, sampleSize):
 		i = 0
-		sampleFinal = []
-		while i < numSamples:
-			sampleFinal.append(self.randomValue(sample))
+		j = 0
+		matrixSample = []
+		sample = []
+
+		while i < sampleSize:
+			while j < len(possibleValues):
+				randomValue = self.randomValue(possibleValues[j])
+				sample.append(randomValue)
+				j += 1
+
+			j = 0
+			matrixSample.append(sample)
 			i += 1
 
-		return sampleFinal
+		return matrixSample
 
 	##
 	## @brief      This method refers to the Hypercube Latin Sampling.
