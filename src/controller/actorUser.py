@@ -11,13 +11,13 @@ class ActorUser(object):
 		self.fileManager = FileManager()
 		self.statiscal = Statiscal()
 
-	def generateCases(pathToIdf, pathToCsv, pathToFolder, sampleSize, method):
-		dictionary = fileManager.csvToHash(pathToCsv)
+	def generateCases(self, pathToIdf, pathToCsv, pathToFolder, sampleSize, method):
+		dictionary = self.fileManager.csvToHash(pathToCsv)
 		if method == "RANDOM":
-			mappedValues = statiscal.randomValues(dictionary, sampleSize)
+			mappedValues = self.statiscal.randomValues(dictionary, sampleSize)
 		elif method == "LHS":
-			lhd = statiscal.lhsValues(dictionary, sampleSize)
-			mappedValues = statiscal.mapValues(lhd, dictionary, sampleSize)
+			lhd = self.statiscal.lhsValues(dictionary, sampleSize)
+			mappedValues = self.statiscal.mapValues(lhd, dictionary, sampleSize)
 
-		fileManager.writeMappedValues(mappedValues, pathToFolder)
-		fileManager.writeNewValues(pathToIdf, pathToFolder)
+		self.fileManager.writeMappedValues(mappedValues, pathToFolder)
+		self.fileManager.writeNewValues(pathToIdf, pathToFolder)
