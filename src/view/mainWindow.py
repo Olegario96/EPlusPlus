@@ -1,18 +1,20 @@
 import os
 from .lineEditDialog import LineEditDialog
 from eplusplus.controller import ActorUser
+from eplusplus.exception import ColumnException
 from PyQt5.QtCore import QSize, Qt, QRect
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QRadioButton
 from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QButtonGroup, QLineEdit
 
 ##
 ## @brief      This class implements the main window of the eplusplus
 ##             application. The UI use the PyQt to create and configure
 ##             all the components. Also, besides the components like
-##             labels, radio buttons, buttons and line text the main
-##             window has a user , represents the controller, to call
+##             labels, radio buttons, buttons and line text, the main
+##             window has a actorUser, that represents the controller, to call
 ##             all the functions implemented in the logic of the program.
 ##
 class MainWindow(QWidget):
@@ -20,6 +22,8 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__()
 
         self.firstTime = True
+        self.actorUser = ActorUser()
+
         self.logo = QLabel()
 
         self.casesButton = QPushButton("Gerar casos")
@@ -37,9 +41,15 @@ class MainWindow(QWidget):
         self.lineIdf = LineEditDialog(self)
         self.lineCsv = LineEditDialog(self)
         self.lineFolder = LineEditDialog(self)
+        self.lineCases = QLineEdit()
+        self.validatorCases = QIntValidator(0, 9999999, self)
+        self.lineCases.setValidator(self.validatorCases)
 
+        self.group = QButtonGroup()
         self.lhsRB = QRadioButton("Latin Hypercube Sampling")
         self.randomRB = QRadioButton("Random")
+        self.group.addButton(self.randomRB)
+        self.group.addButton(self.lhsRB)
 
         self.gridLayout = QGridLayout()
         self.initComponents()
@@ -90,17 +100,19 @@ class MainWindow(QWidget):
     ## @return     This is a void method.
     ##
     def casesButtonClicked(self):
-        self.removeAll()
+        self.clearAll()
 
         idfLabel = QLabel()
         csvLabel = QLabel()
         folderStoreLabel = QLabel()
-        methodSamplingLabel = QLabel(self)
+        methodSamplingLabel = QLabel()
+        sampleSize = QLabel()
 
         idfLabel.setText("Arquivo base idf:")
         csvLabel.setText("Arquivo de configuração CSV:")
         folderStoreLabel.setText("Pasta para salvar os arquivos CSV's:")
         methodSamplingLabel.setText("Método de amostragem")
+        sampleSize.setText("Número da amostragem")
 
         self.gridLayout.addWidget(idfLabel, 1, 0, Qt.AlignRight)
         self.gridLayout.addWidget(self.chooseIdfButton, 1, 1)
@@ -118,8 +130,12 @@ class MainWindow(QWidget):
         self.gridLayout.addWidget(self.randomRB, 5, 0, Qt.AlignTop)
         self.gridLayout.addWidget(self.lhsRB, 5, 2, Qt.AlignTop)
 
-        self.gridLayout.addWidget(self.confirmButton, 6, 0, 1, 3, Qt.AlignTop)
-        self.gridLayout.addWidget(self.cancelButton, 7, 0, 1, 3, Qt.AlignTop)
+        self.gridLayout.addWidget(sampleSize, 6, 0, 1, 2)
+        self.gridLayout.addWidget(self.lineCases, 6, 2, 1, 3, Qt.AlignCenter)
+
+        self.gridLayout.addWidget(self.confirmButton, 7, 0, 1, 3, Qt.AlignTop)
+        self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignTop)
+
 
     ##
     ## @brief      This method is actived whenever the "chooseIdf" button is
@@ -183,15 +199,16 @@ class MainWindow(QWidget):
     ## @return     This is a void method.
     ##
     def cancelButtonClicked(self):
-        self.removeAll()
+        self.clearAll()
         self.initComponents()
 
     ##
     ## @brief      This method is actived whenever the confirm button
     ##             is pressed. This method checks if all the lineText
-    ##             fields where filled. If not, the user will be informed
-    ##             through a QMessageBox. Otherwise, if all fields where
-    ##             covered then the cases will be generate.
+    ##             fields where filled and one radio button. If not, the
+    ##             user will be informed through a QMessageBox. Otherwise,
+    ##             if all fields where covered then the cases will be generate.
+    ##             See the "generateCases" method for more info.
     ##
     ## @param      self  Non static method.
     ##
@@ -209,25 +226,77 @@ class MainWindow(QWidget):
             msgBox.exec_()
         elif self.lineFolder.text() == "":
             msgBox.exec_()
+        elif self.lineCases.text() == "":
+            msgBox.exec_()
+        elif not self.lhsRB.isChecked() and not self.randomRB.isChecked():
+            msgBox.exec_()
         else:
-            print("dale")
+            self.generateCases()
 
     ##
-    ## @brief      This method removes every component at the current window,
-    ##             except for the layout. Also, this method clear all lineText
-    ##             attributes.
+    ## @brief      This method takes all values informed by the user through
+    ##             the lineEdit fields. After analyze the sampling method
+    ##             choosed, the UI will call the actorUser to generate
+    ##             the cases. If all happens as it should, then a QmessageBox
+    ##             will inform the user. Otherwise, if a "ColumnException"
+    ##             raise from the the "actorUser", the user will be informed
+    ##             that the Csv or the Idf are not matching.
     ##
     ## @param      self  Non static method.
     ##
     ## @return     This is a void method.
     ##
-    def removeAll(self):
+    def generateCases(self):
+        pathToIdf = self.lineIdf.text()
+        pathToCsv = self.lineCsv.text()
+        pathToFolder = self.lineFolder.text()
+        sampleSize = int(self.lineCases.text())
+        msgBox = QMessageBox()
+        msg = ""
+
+        if self.lhsRB.isChecked():
+            method = "LHS"
+        else:
+            method = "RANDOM"
+
+        try:
+            self.actorUser.generateCases(pathToIdf, pathToCsv, pathToFolder, sampleSize, method)
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setWindowTitle("EPlusPlus-INF")
+            msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
+            msgBox.setText(msg)
+            msgBox.exec_()
+        except ColumnException as e:
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setWindowTitle("EPlusPlus-ERR")
+            msg = "O arquivo csv ou o arquivo idf não estão no formato correto!"
+            msgBox.setText(msg)
+            msgBox.exec_()
+
+    ##
+    ## @brief      This method removes every component at the current window,
+    ##             except for the layout. Also, this method clear all lineText
+    ##             attributes and clear the values of the radio buttons. The
+    ##             "setExclusive" False and "setExclusive" True is needed to
+    ##             clear the values of the radio button components.
+    ##
+    ## @param      self  Non static method.
+    ##
+    ## @return     This is a void method.
+    ##
+    def clearAll(self):
         for component in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(component).widget().setParent(None)
 
         self.setLineIdfText("")
         self.setLineCsvText("")
         self.setLineFolderText("")
+        self.setLineCasesText("")
+        self.group.setExclusive(False)
+        self.randomRB.setChecked(False)
+        self.lhsRB.setChecked(False)
+        self.group.setExclusive(True)
+
 
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
@@ -267,3 +336,15 @@ class MainWindow(QWidget):
     ##
     def setLineFolderText(self, string):
         self.lineFolder.setText(string)
+
+    ##
+    ## @brief      This method sets the fourth lineText of the 2nd screen
+    ##             with the value equals to the string passed as arg.
+    ##
+    ## @param      self    The object
+    ## @param      string  String that will be show at the lineCases
+    ##
+    ## @return     This is a void method
+    ##
+    def setLineCasesText(self, string):
+        self.lineCases.setText(string)
