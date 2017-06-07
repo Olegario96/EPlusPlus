@@ -23,7 +23,8 @@ class ActorUser(object):
 	##             , the respective sampling method will be called. If the
 	##             "LHS" method was choosed, the interpolation of values
 	##             will be calculated too. Next, we save the values into a
-	##             temporary csv file and write the new idf files.
+	##             temporary csv file and write the new idf files. At the
+	##             end, we delete the temporary csv file.
 	##
 	## @param      self          Non static method.
 	## @param      pathToIdf     The path to idf file informed through UI.
@@ -48,3 +49,4 @@ class ActorUser(object):
 
 		self.fileManager.writeMappedValues(mappedValues, pathToFolder)
 		self.fileManager.writeNewValues(pathToIdf, pathToFolder, method)
+		self.fileManager.removeTemporaryCsv(pathToFolder)
