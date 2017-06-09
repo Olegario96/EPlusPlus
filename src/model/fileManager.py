@@ -88,20 +88,19 @@ class FileManager(object):
 			csvWriter.writerow(values)
 
 	##TODO
-	def writeNewValues(self, pathToIdf, pathToFolder):
+	def writeNewValues(self, pathToIdf, pathToFolder, method):
 		idfFile = open(pathToIdf, 'r')
 		csvFile = open(pathToFolder + "/tempFile.csv", 'r')
 
 		csvReader = csv.reader(csvFile, delimiter=',')
-		idfReader = csv.reader(idfFile, delimiter=',')
 		nameColumns = csvReader.__next__()
-		idfLines = list(idfReader)
 
 		i = 0
 		for row in csvReader:
-			idfOut = open(pathToIdf + str(i), 'w')
-			idfWriter = csv.writer(idfOut, delimiter=',', quotechar="|")
-			for line in idfLines:
+			newNameFile = pathToIdf[:-4] + "_" + method.upper() + "_" + str(i)
+			idfOut = open(newNameFile, 'w')
+			lines = idfFile.readlines()
+			for line in lines:
 				if line and "@@" in line[0]:
 					valueToBeMapped = line[0].replace(" ", "")
 					try:
@@ -109,14 +108,15 @@ class FileManager(object):
 						newLine = "    " + str(row[index])
 						if len(line) > 1:
 							newLine += line[1]
-						idfWriter.writerow(newLine)
+						idfOut.write(newLine)
 					except Exception as e:
 						msg = "Erro! As colunas do csv não são as mesmas"
 						msg += " solicitadas pelo arquivo idf!"
 						raise ColumnException(msg)
 				else:
-					idfWriter.writerow(line)
+					idfOut.write(line)
 
 			i += 1
 
-		os.remove(csvFile)
+	def removeTemporaryCsv(self, pathToFolder):
+		os.remove(pathToFolder + "/tempFile.csv")
