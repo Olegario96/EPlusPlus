@@ -1,6 +1,8 @@
 import os
+import ctypes
 from .lineEditDialog import LineEditDialog
 from eplusplus.controller import ActorUser
+from eplusplus.model import PlatformManager
 from eplusplus.exception import ColumnException
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
@@ -22,6 +24,8 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__()
 
         self.firstTime = True
+        self.pathToIcon = "../media/img/icon.png"
+        self.platformManager = PlatformManager()
         self.actorUser = ActorUser()
 
         self.logo = QLabel()
@@ -34,9 +38,7 @@ class MainWindow(QWidget):
         self.chooseCSVButton = QPushButton("Escolher arquivo...")
         self.chooseFolderButton = QPushButton("Escolher pasta...")
 
-        # appIcon = QIcon()
-        # appIcon.addFile("logo.png", QSize(16,16))
-        # self.setWindowIcon(appIcon)
+        self.setWindowIcon(QIcon(self.pathToIcon))
 
         self.lineIdf = LineEditDialog(self)
         self.lineCsv = LineEditDialog(self)
@@ -67,8 +69,12 @@ class MainWindow(QWidget):
     ## @return     This is a void method.
     ##
     def initComponents(self):
-        pixmap = QPixmap("logo.png")
+        pixmap = QPixmap("../media/img/title.png")
         self.logo.setPixmap(pixmap)
+
+        if (self.platformManager.isWindows()):
+            appid = 'LabEEE.EPlusPlus.V0.8'
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
 
         self.gridLayout.addWidget(self.logo, 0, 0)
         self.gridLayout.addWidget(self.casesButton, 1, 0)
@@ -217,6 +223,7 @@ class MainWindow(QWidget):
     def confirmButtonClicked(self):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
         msgBox.setWindowTitle("EPlusPlus-WAR")
         msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
 
@@ -252,6 +259,7 @@ class MainWindow(QWidget):
         pathToFolder = self.lineFolder.text()
         sampleSize = int(self.lineCases.text())
         msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
         msg = ""
 
         if self.lhsRB.isChecked():
