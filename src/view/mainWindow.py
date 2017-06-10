@@ -274,6 +274,7 @@ class MainWindow(QWidget):
             msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
             msgBox.setText(msg)
             msgBox.exec_()
+            self.cancelButtonClicked()
         except ColumnException as e:
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setWindowTitle("EPlusPlus-ERR")
