@@ -87,7 +87,33 @@ class FileManager(object):
 		for values in mappedValues:
 			csvWriter.writerow(values)
 
-	##TODO
+	
+	##
+	## @brief      This method is the core of the first use case. This method
+	##             reads the temporary csv file and the idf file. After that,
+	##             it reads line by line of the csv, which represents a sample.
+	##             For each sample, a new idf file will be created. This is
+	##             necessary, because each idf represents a case. Next, we
+	##             start to iterate line by line of the idf until find the 
+	##             "@@" sequence, its a specie of a "variable". We can check
+	##             if the "@@" sequence is at the line just checking the first
+	##             member (line[0]) and check if the line is not empty to not
+	##             have problems with exception. If this condition is not 
+	##             attended, this means that is just a normal line and we just
+	##             have to write it.Finally, we map the value using the "index"
+	##             funciton.  the final if is just to bring the comments in the
+	##             old the idf to the new. We repeat the process for each 
+	##             sample (row in the csv). 
+	##
+	## @param      self          Non static method
+	## @param      pathToIdf     The path to idf
+	## @param      pathToFolder  The path to folder where the new idf files
+	##                           will be saved.
+	## @param      method        Method of sampling. At the version 1.0 can be
+	##                           "LHS" or "RANDOM"
+	##
+	## @return     This is a void method.
+	##
 	def writeNewValues(self, pathToIdf, pathToFolder, method):
 		idfFile = open(pathToIdf, 'r')
 		csvFile = open(pathToFolder + "/tempFile.csv", 'r')
@@ -95,28 +121,38 @@ class FileManager(object):
 		csvReader = csv.reader(csvFile, delimiter=',')
 		nameColumns = csvReader.__next__()
 
+		idfReader = csv.reader(idfFile, delimiter=',')
+		idfLines = list(idfReader)
+
 		i = 0
 		for row in csvReader:
-			newNameFile = pathToIdf[:-4] + "_" + method.upper() + "_" + str(i)
-			idfOut = open(newNameFile, 'w')
-			lines = idfFile.readlines()
-			for line in lines:
-				if line and "@@" in line[0]:
-					valueToBeMapped = line[0].replace(" ", "")
-					try:
+			if row:
+				newFile = pathToIdf[:-4] + "_" + method.upper() + "_" + str(i)
+				newFile += ".idf"
+				idfOut = open(newFile, 'w')
+				for line in idfLines:
+					if line and "@@" in line[0]:
+						valueToBeMapped = line[0].replace(" ", "")
 						index = nameColumns.index(valueToBeMapped)
 						newLine = "    " + str(row[index])
 						if len(line) > 1:
 							newLine += line[1]
 						idfOut.write(newLine)
-					except Exception as e:
-						msg = "Erro! As colunas do csv não são as mesmas"
-						msg += " solicitadas pelo arquivo idf!"
-						raise ColumnException(msg)
-				else:
-					idfOut.write(line)
+						
+					else:
+						print(line)
+						idfOut.write(line)
+				i += 1
 
-			i += 1
 
+	##
+	## @brief      Removes a temporary csv.
+	##
+	## @param      self          Non static method.
+	## @param      pathToFolder  The path to folder where the temp file is 
+	##                           located.
+	##
+	## @return     This is a void method.
+	##
 	def removeTemporaryCsv(self, pathToFolder):
 		os.remove(pathToFolder + "/tempFile.csv")
