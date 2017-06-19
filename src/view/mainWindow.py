@@ -1,5 +1,6 @@
 import os
 import ctypes
+import webbrowser
 from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
 from eplusplus.model import PlatformManager
@@ -9,7 +10,7 @@ from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QRadioButton
 from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
-from PyQt5.QtWidgets import QButtonGroup, QLineEdit
+from PyQt5.QtWidgets import QButtonGroup, QLineEdit, QAction, QMenuBar
 
 ##
 ## @brief      This class implements the main window of the eplusplus
@@ -57,6 +58,15 @@ class MainWindow(QWidget):
         self.group.addButton(self.lhsRB)
 
         self.gridLayout = QGridLayout()
+
+        self.menuBar = QMenuBar()
+        self.help = self.menuBar.addMenu("Help")
+        self.helpAction = QAction("Documentation", self)
+        self.help.addAction(self.helpAction)
+        self.helpAction.triggered.connect(self.documentationClicked)
+
+        self.gridLayout.setMenuBar(self.menuBar)
+
         self.initComponents()
 
 
@@ -376,6 +386,7 @@ class MainWindow(QWidget):
         msg = ""
 
         try:
+            self.actorUser.findIdfFiles(pathToFolder)
             self.actorUser.runSimulation(pathToFolder, pathToEpw)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setWindowTitle("EPlusPlus-INF")
@@ -478,3 +489,6 @@ class MainWindow(QWidget):
     ##
     def setLineEpwText(self, string):
         self.lineEpw.setText(string)
+
+    def documentationClicked(self):
+        webbrowser.open("file://"+os.path.abspath("../docs/index.html"))
