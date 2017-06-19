@@ -1,6 +1,8 @@
+import os
 import csv
 from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
+from eplusplus.exception import NoIdfException
 
 ##
 ## @brief      This class represents the controller of the application.
@@ -51,8 +53,30 @@ class ActorUser(object):
 		self.fileManager.writeNewValues(pathToIdf, pathToFolder, method)
 		self.fileManager.removeTemporaryCsv(pathToFolder)
 
-	# TODO
-	# Ver se existe pelo menos um arquivo idf na pasta informada, caso contrário
-	# lançar exeção
-	def findIdfFiles():
+	##
+	## @brief      This method lists all files and folders inside the
+	##             folder passed as arg. After that, we iterate through
+	##             each element. If, at least, one file has the .idf
+	##             extenstion, then return True. If no IDF file were
+	##             founded, than raise a exception.
+	##
+	## @param      self          Non static method
+	## @param      pathToFolder  Path to the folder containing the IDF
+	##                           files, informed by the user through the
+	##                           run simulation screen.
+	##
+	##
+	## @return     Return True if at least one IDF file were founded.
+	##             Otherwise, will raise a exception.
+	##
+	def findIdfFiles(self, pathToFolder):
+		files = os.listidr(pathToFolder)
+		for file in files:
+			if str(file).endswith(".idf"):
+				return True
+
+		msg = "Não existe nenhum arquivo IDF na pasta informada!"
+		raise NoIdfException(msg)
+
+	def runSimulation(self, pathToFolder, pathToEpw):
 		pass
