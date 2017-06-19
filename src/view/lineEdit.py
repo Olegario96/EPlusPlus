@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import QLineEdit, QFileDialog
 ##             allow to every time that the user tries to type at the LineEdit
 ##             nothing will happen.
 ##
-class LineEditDialog(QLineEdit):
+class LineEdit(QLineEdit):
 	def __init__(self, parent):
-		super(LineEditDialog, self).__init__()
+		super(LineEdit, self).__init__()
 		self.parentWindow = parent
 
 
