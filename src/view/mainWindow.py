@@ -491,4 +491,5 @@ class MainWindow(QWidget):
         self.lineEpw.setText(string)
 
     def documentationClicked(self):
-        webbrowser.open("file://"+os.path.abspath("../docs/index.html"))
+        doc = "../docs/DocumentoRequisitosEplusplus.pdf"
+        webbrowser.open("file://"+os.path.abspath(doc))
