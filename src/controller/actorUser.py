@@ -50,3 +50,9 @@ class ActorUser(object):
 		self.fileManager.writeMappedValues(mappedValues, pathToFolder)
 		self.fileManager.writeNewValues(pathToIdf, pathToFolder, method)
 		self.fileManager.removeTemporaryCsv(pathToFolder)
+
+	# TODO
+	# Ver se existe pelo menos um arquivo idf na pasta informada, caso contrário
+	# lançar exeção
+	def findIdfFiles():
+		pass
