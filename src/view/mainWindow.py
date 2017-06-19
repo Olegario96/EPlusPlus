@@ -1,6 +1,6 @@
 import os
 import ctypes
-from .lineEditDialog import LineEditDialog
+from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
 from eplusplus.model import PlatformManager
 from eplusplus.exception import ColumnException
@@ -32,20 +32,23 @@ class MainWindow(QWidget):
 
         self.casesButton = QPushButton("Gerar casos")
         self.simulationButton = QPushButton("Executar simulação")
-        self.confirmButton = QPushButton("Confirmar")
+        self.confirmButtonCases = QPushButton("Confirmar")
         self.cancelButton = QPushButton("Cancelar")
-        self.chooseIdfButton = QPushButton("Escolher arquivo...")
-        self.chooseCSVButton = QPushButton("Escolher arquivo...")
+        self.chooseIdfButton = QPushButton("Escolher IDF...")
+        self.chooseCSVButton = QPushButton("Escolher CSV...")
         self.chooseFolderButton = QPushButton("Escolher pasta...")
+        self.chooseEpwButton = QPushButton("Escolher EPW...")
+        self.confirmButtonSimulation = QPushButton("Confirmar")
 
         self.setWindowIcon(QIcon(self.pathToIcon))
 
-        self.lineIdf = LineEditDialog(self)
-        self.lineCsv = LineEditDialog(self)
-        self.lineFolder = LineEditDialog(self)
+        self.lineIdf = LineEdit(self)
+        self.lineCsv = LineEdit(self)
+        self.lineFolder = LineEdit(self)
         self.lineCases = QLineEdit()
         self.validatorCases = QIntValidator(0, 9999999, self)
         self.lineCases.setValidator(self.validatorCases)
+        self.lineEpw = LineEdit(self)
 
         self.group = QButtonGroup()
         self.lhsRB = QRadioButton("Latin Hypercube Sampling")
@@ -84,14 +87,17 @@ class MainWindow(QWidget):
             self.firstTime = False
 
             self.casesButton.clicked.connect(self.casesButtonClicked)
+            self.simulationButton.clicked.connect(self.simulationButtonClicked)
             self.cancelButton.clicked.connect(self.cancelButtonClicked)
-            self.confirmButton.clicked.connect(self.confirmButtonClicked)
+            self.confirmButtonCases.clicked.connect(self.confirmButtonCasesClicked)
             self.chooseIdfButton.clicked.connect(self.chooseIdfClicked)
             self.chooseCSVButton.clicked.connect(self.chooseCsvClicked)
             self.chooseFolderButton.clicked.connect(self.chooseFolderClicked)
+            self.chooseEpwButton.clicked.connect(self.chooseEpwButtonClicked)
+            self.confirmButtonSimulation.clicked.connect(self.confirmButtonSimulationClicked)
 
             self.setLayout(self.gridLayout)
-            self.setFixedSize(470, 230)
+            self.setFixedSize(650, 250)
             self.setWindowTitle("EPlusPlus")
             self.show()
 
@@ -139,9 +145,32 @@ class MainWindow(QWidget):
         self.gridLayout.addWidget(sampleSize, 6, 0, 1, 2)
         self.gridLayout.addWidget(self.lineCases, 6, 2, 1, 3, Qt.AlignCenter)
 
-        self.gridLayout.addWidget(self.confirmButton, 7, 0, 1, 3, Qt.AlignTop)
+        self.gridLayout.addWidget(self.confirmButtonCases, 7, 0, 1, 3, Qt.AlignTop)
         self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignTop)
 
+    def simulationButtonClicked(self):
+        self.clearAll()
+
+        folderStoreLabel = QLabel()
+        epwLabel =  QLabel()
+
+        folderStoreLabel.setText("Pasta com os arquivos idf's")
+        epwLabel.setText("Arquivo EPW")
+
+        self.gridLayout.addWidget(folderStoreLabel, 1, 0, Qt.AlignRight)
+        self.gridLayout.addWidget(self.chooseFolderButton, 1, 1)
+        self.gridLayout.addWidget(self.lineFolder, 1, 2)
+
+        self.gridLayout.addWidget(epwLabel, 2, 0, Qt.AlignRight)
+        self.gridLayout.addWidget(self.chooseEpwButton, 2, 1)
+        self.gridLayout.addWidget(self.lineEpw, 2, 2)
+
+        # Doing this just to the UI get a little bit more beautiful
+        self.gridLayout.addWidget(QLabel(), 3, 0)
+        self.gridLayout.addWidget(QLabel(), 4, 0)
+
+        self.gridLayout.addWidget(self.confirmButtonSimulation, 7, 0, 1, 3, Qt.AlignBottom)
+        self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignBottom)
 
     ##
     ## @brief      This method is actived whenever the "chooseIdf" button is
@@ -208,6 +237,25 @@ class MainWindow(QWidget):
         self.clearAll()
         self.initComponents()
 
+    def chooseEpwButtonClicked(self):
+        msg = "Escolha o arquivo EPW"
+        epwFile = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.epw")
+        self.setLineEpwText(epwFile[0])
+
+    def confirmButtonSimulationClicked(self):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
+        msgBox.setWindowTitle("EPlusPlus-WAR")
+        msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
+
+        if self.lineFolder.text() == "":
+            msgBox.exec_()
+        elif self.lineEpw.text() == "":
+            msgBox.exec_()
+        else:
+            self.runSimulation()
+
     ##
     ## @brief      This method is actived whenever the confirm button
     ##             is pressed. This method checks if all the lineText
@@ -220,7 +268,7 @@ class MainWindow(QWidget):
     ##
     ## @return     This is a void method.
     ##
-    def confirmButtonClicked(self):
+    def confirmButtonCasesClicked(self):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Warning)
         msgBox.setWindowIcon(QIcon(self.pathToIcon))
@@ -282,6 +330,9 @@ class MainWindow(QWidget):
             msgBox.setText(msg)
             msgBox.exec_()
 
+    def runSimulation(self):
+        pass
+
     ##
     ## @brief      This method removes every component at the current window,
     ##             except for the layout. Also, this method clear all lineText
@@ -301,6 +352,7 @@ class MainWindow(QWidget):
         self.setLineCsvText("")
         self.setLineFolderText("")
         self.setLineCasesText("")
+        self.setLineEpwText("")
         self.group.setExclusive(False)
         self.randomRB.setChecked(False)
         self.lhsRB.setChecked(False)
@@ -350,10 +402,22 @@ class MainWindow(QWidget):
     ## @brief      This method sets the fourth lineText of the 2nd screen
     ##             with the value equals to the string passed as arg.
     ##
-    ## @param      self    The object
+    ## @param      self    Non static method
     ## @param      string  String that will be show at the lineCases
     ##
     ## @return     This is a void method
     ##
     def setLineCasesText(self, string):
         self.lineCases.setText(string)
+
+    ##
+    ## @brief      This method sets the second lineText of the 3rd screen
+    ##             with the value equals to the string passed as arg.
+    ##
+    ## @param      self    Non static method
+    ## @param      string  String that will be show at the lineEpw
+    ##
+    ## @return     This is a void method.
+    ##
+    def setLineEpwText(self, string):
+        self.lineEpw.setText(string)
