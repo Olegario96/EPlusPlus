@@ -1,7 +1,9 @@
 import os
 import csv
+import subprocess
 from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
+from eplusplus.model import PlatformManager
 from eplusplus.exception import NoIdfException
 
 ##
@@ -17,6 +19,7 @@ class ActorUser(object):
 		super(ActorUser, self).__init__()
 		self.fileManager = FileManager()
 		self.statiscal = Statiscal()
+		self.platformManager = PlatformManager()
 
 	##
 	## @brief      This method receives all parameters through UI.
@@ -70,7 +73,7 @@ class ActorUser(object):
 	##             Otherwise, will raise a exception.
 	##
 	def findIdfFiles(self, pathToFolder):
-		files = os.listidr(pathToFolder)
+		files = os.listdir(pathToFolder)
 		for file in files:
 			if str(file).endswith(".idf"):
 				return True
@@ -78,5 +81,31 @@ class ActorUser(object):
 		msg = "Não existe nenhum arquivo IDF na pasta informada!"
 		raise NoIdfException(msg)
 
+	##
+	## @brief      This method execute the simulation using IDF files and
+	##             the EPW file informed by the user. For each IDF file inside
+	##             the folder informed by the user, a simulation of the EnergyPlus
+	##             will be executed using the EPW file. It has different
+	##             commands depending of the operating system.
+	##
+	## @param      self          Non static method.
+	## @param      pathToFolder  The path to folder
+	## @param      pathToEpw     The path to epw
+	##
+	## @return     This is a void method
+	##
 	def runSimulation(self, pathToFolder, pathToEpw):
-		pass
+		files = os.listdir(pathToFolder)
+
+		if platformManager.isLinux():
+			for file in files:
+				if str(file).endswith(".idf"):
+					absPath = os.path.abspath(file)
+					cmd = "energyplus -w %s -r %s" % (pathToEpw, abspath)
+					subprocess.Popen(cmd, shell=True)
+		elif platformManager.isWindows():
+			for file in files:
+				if str(file).endswith(".idf"):
+					abspath = os.path.abspath(file)
+					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -r %s" % (pathToEpw, abspath)
+					subprocess.Popen(cmd, shell=True)
