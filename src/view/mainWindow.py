@@ -3,7 +3,7 @@ import ctypes
 from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
 from eplusplus.model import PlatformManager
-from eplusplus.exception import ColumnException
+from eplusplus.exception import ColumnException, NoIdfException
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QButtonGroup, QLineEdit
 ##             all the components. Also, besides the components like
 ##             labels, radio buttons, buttons and line text, the main
 ##             window has a actorUser, that represents the controller, to call
-##             all the functions implemented in the logic of the program.
+##             all the methods implemented in the logic of the program.
 ##
 class MainWindow(QWidget):
     def __init__(self):
@@ -237,25 +237,6 @@ class MainWindow(QWidget):
         self.clearAll()
         self.initComponents()
 
-    def chooseEpwButtonClicked(self):
-        msg = "Escolha o arquivo EPW"
-        epwFile = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.epw")
-        self.setLineEpwText(epwFile[0])
-
-    def confirmButtonSimulationClicked(self):
-        msgBox = QMessageBox()
-        msgBox.setIcon(QMessageBox.Warning)
-        msgBox.setWindowIcon(QIcon(self.pathToIcon))
-        msgBox.setWindowTitle("EPlusPlus-WAR")
-        msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
-
-        if self.lineFolder.text() == "":
-            msgBox.exec_()
-        elif self.lineEpw.text() == "":
-            msgBox.exec_()
-        else:
-            self.runSimulation()
-
     ##
     ## @brief      This method is actived whenever the confirm button
     ##             is pressed. This method checks if all the lineText
@@ -330,8 +311,84 @@ class MainWindow(QWidget):
             msgBox.setText(msg)
             msgBox.exec_()
 
+     ##
+    ## @brief      This method is actived whenever the "chooseEpwButton" is
+    ##             clicked. When this method is activated, a QFileDialog will
+    ##             be show to the user and it will be possible to choose a
+    ##             EPW file. After choosed the EPW, the "lineEpw" attribute
+    ##             will have its text changed to the absolute path to EPW
+    ##             choosed.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method
+    ##
+    def chooseEpwButtonClicked(self):
+        msg = "Escolha o arquivo EPW"
+        epwFile = QFileDialog.getOpenFileName(self, msg, os.getenv("HOME"), filter="*.epw")
+        self.setLineEpwText(epwFile[0])
+
+    ##
+    ## @brief      This method is called whenever the confirm button of the
+    ##             screen of simulation is clicked. This method check if all
+    ##             fields are filled. If not, a warning message will appear
+    ##             to the user through a MessageBox informing that all fields
+    ##             need to be completed. Otherwise, if all fields were filled,
+    ##             the simulation will be executed.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method
+    ##
+    def confirmButtonSimulationClicked(self):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
+        msgBox.setWindowTitle("EPlusPlus-WAR")
+        msgBox.setText("Todos os campos devem estar preenchidos para prosseguir!")
+
+        if self.lineFolder.text() == "":
+            msgBox.exec_()
+        elif self.lineEpw.text() == "":
+            msgBox.exec_()
+        else:
+            self.runSimulation()
+
+    ##
+    ## @brief      At first lines, we transform the content informed by the
+    ##             user at the current screen into strings. After that, we
+    ##             create a QMessageBox to show important information. Then
+    ##             it will try to run the simulation through the "actorUser" (
+    ##             see its documentation for more info). If no IDF file be
+    ##             founded at the folder informed, a exception will be raised.
+    ##             Otherwise, if at least, one IDF be founded, the simulation
+    ##             will occur normally.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method.
+    ##
     def runSimulation(self):
-        pass
+        pathToFolder = self.lineFolder.text()
+        pathToEpw = self.lineEpw.text()
+        msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
+        msg = ""
+
+        try:
+            self.actorUser.runSimulation(pathToFolder, pathToEpw)
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setWindowTitle("EPlusPlus-INF")
+            msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
+            msgBox.setText(msg)
+            msgBox.exec_()
+            self.cancelButtonClicked()
+        except NoIdfException as e:
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setWindowTitle("EPlusPlus-ERR")
+            msg = "Não há nenhum arquivo IDF na pasta informada!"
+            msgBox.setText(msg)
+            msgBox.exec_()
 
     ##
     ## @brief      This method removes every component at the current window,
