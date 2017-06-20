@@ -388,6 +388,9 @@ class MainWindow(QWidget):
 
         try:
             self.actorUser.findIdfFiles(pathToFolder)
+            msg = "Processando arquivos..."
+            msgBox.setText(msg)
+            msgBox.show()
             self.actorUser.runSimulation(pathToFolder, pathToEpw)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setWindowTitle("EPlusPlus-INF")
