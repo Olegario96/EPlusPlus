@@ -96,16 +96,18 @@ class ActorUser(object):
 	##
 	def runSimulation(self, pathToFolder, pathToEpw):
 		files = os.listdir(pathToFolder)
+		if self.platformManager.isLinux():
+			for file in files:
+				if str(file).endswith(".idf"):
+					absPath = str(pathToFolder) +"/" + str(file)
+					cmd = "energyplus -w %s -r %s" % (pathToEpw, absPath)
+					subprocess.call(cmd, shell=True)
+		elif self.platformManager.isWindows():
+			for file in files:
+				if str(file).endswith(".idf"):
+					absPath = str(pathToFolder) +"/" + str(file)
+					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -r %s" % (pathToEpw, absPath)
+					subprocess.call(cmd, shell=True)
 
-		if platformManager.isLinux():
-			for file in files:
-				if str(file).endswith(".idf"):
-					absPath = os.path.abspath(file)
-					cmd = "energyplus -w %s -r %s" % (pathToEpw, abspath)
-					subprocess.Popen(cmd, shell=True)
-		elif platformManager.isWindows():
-			for file in files:
-				if str(file).endswith(".idf"):
-					abspath = os.path.abspath(file)
-					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -r %s" % (pathToEpw, abspath)
-					subprocess.Popen(cmd, shell=True)
+	def removeTemporaryCsv(self, pathToFolder):
+		self.fileManager.removeTemporaryCsv(pathToFolder)
