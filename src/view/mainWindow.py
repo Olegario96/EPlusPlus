@@ -47,7 +47,7 @@ class MainWindow(QWidget):
         self.lineCsv = LineEdit(self)
         self.lineFolder = LineEdit(self)
         self.lineCases = QLineEdit()
-        self.validatorCases = QIntValidator(0, 9999999, self)
+        self.validatorCases = QIntValidator(1, 9999999, self)
         self.lineCases.setValidator(self.validatorCases)
         self.lineEpw = LineEdit(self)
 
@@ -320,6 +320,7 @@ class MainWindow(QWidget):
             msg = "O arquivo csv ou o arquivo idf não estão no formato correto!"
             msgBox.setText(msg)
             msgBox.exec_()
+            self.actorUser.removeTemporaryCsv(pathToFolder)
 
      ##
     ## @brief      This method is actived whenever the "chooseEpwButton" is
