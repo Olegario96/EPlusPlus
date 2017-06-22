@@ -130,7 +130,7 @@ class MainWindow(QWidget):
         methodSamplingLabel = QLabel()
         sampleSize = QLabel()
 
-        idfLabel.setText("Arquivo base idf:")
+        idfLabel.setText("Arquivo base IDF:")
         csvLabel.setText("Arquivo de configuração CSV:")
         folderStoreLabel.setText("Pasta para salvar os arquivos IDF's:")
         methodSamplingLabel.setText("Método de amostragem")
