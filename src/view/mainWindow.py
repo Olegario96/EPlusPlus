@@ -495,6 +495,16 @@ class MainWindow(QWidget):
     def setLineEpwText(self, string):
         self.lineEpw.setText(string)
 
+    ##
+    ## @brief      This method is used every time the "Documentation" button
+    ##             is clicked at the menu bar. This method open the manual
+    ##             of the program in pdf format at the default browser of the
+    ##             current user.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method.
+    ##
     def documentationClicked(self):
         doc = "../docs/DocumentoRequisitosEplusplus.pdf"
         webbrowser.open("file://"+os.path.abspath(doc))
