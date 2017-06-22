@@ -132,7 +132,7 @@ class MainWindow(QWidget):
 
         idfLabel.setText("Arquivo base idf:")
         csvLabel.setText("Arquivo de configuração CSV:")
-        folderStoreLabel.setText("Pasta para salvar os arquivos CSV's:")
+        folderStoreLabel.setText("Pasta para salvar os arquivos IDF's:")
         methodSamplingLabel.setText("Método de amostragem")
         sampleSize.setText("Número da amostragem")
 
