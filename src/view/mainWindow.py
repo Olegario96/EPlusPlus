@@ -69,7 +69,6 @@ class MainWindow(QWidget):
 
         self.initComponents()
 
-
     ##
     ## @brief      This method is called at the constructor method or
     ##             a cancel button is clicked to go back to the first screen.
@@ -322,7 +321,7 @@ class MainWindow(QWidget):
             msgBox.exec_()
             self.actorUser.removeTemporaryCsv(pathToFolder)
 
-     ##
+    ##
     ## @brief      This method is actived whenever the "chooseEpwButton" is
     ##             clicked. When this method is activated, a QFileDialog will
     ##             be show to the user and it will be possible to choose a
@@ -430,7 +429,6 @@ class MainWindow(QWidget):
         self.randomRB.setChecked(False)
         self.lhsRB.setChecked(False)
         self.group.setExclusive(True)
-
 
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
