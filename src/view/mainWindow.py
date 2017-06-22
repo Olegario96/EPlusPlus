@@ -150,10 +150,10 @@ class MainWindow(QWidget):
 
         self.gridLayout.addWidget(methodSamplingLabel, 4, 1, Qt.AlignBottom)
         self.gridLayout.addWidget(self.randomRB, 5, 0, Qt.AlignTop)
-        self.gridLayout.addWidget(self.lhsRB, 5, 2, Qt.AlignTop)
+        self.gridLayout.addWidget(self.lhsRB, 5, 2, Qt.AlignRight)
 
         self.gridLayout.addWidget(sampleSize, 6, 0, 1, 2)
-        self.gridLayout.addWidget(self.lineCases, 6, 2, 1, 3, Qt.AlignCenter)
+        self.gridLayout.addWidget(self.lineCases, 6, 2)
 
         self.gridLayout.addWidget(self.confirmButtonCases, 7, 0, 1, 3, Qt.AlignTop)
         self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignTop)
