@@ -87,7 +87,6 @@ class FileManager(object):
 		for values in mappedValues:
 			csvWriter.writerow(values)
 
-	
 	##
 	## @brief      This method is the core of the first use case. This method
 	##             reads the temporary csv file and the idf file. After that,
@@ -143,7 +142,6 @@ class FileManager(object):
 						print(line)
 						idfOut.write(line)
 				i += 1
-
 
 	##
 	## @brief      Removes a temporary csv.
