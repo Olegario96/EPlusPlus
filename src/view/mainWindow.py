@@ -9,7 +9,7 @@ from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QRadioButton
-from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QGridLayout, QFileDialog, QMessageBox, QApplication
 from PyQt5.QtWidgets import QButtonGroup, QLineEdit, QAction, QMenuBar
 
 ##
@@ -64,7 +64,7 @@ class MainWindow(QWidget):
         self.helpAction = QAction("Documentation", self)
         self.help.addAction(self.helpAction)
         self.helpAction.triggered.connect(self.documentationClicked)
-
+        self.processingMessage = QLabel()
         self.gridLayout.setMenuBar(self.menuBar)
 
         self.initComponents()
@@ -177,7 +177,7 @@ class MainWindow(QWidget):
 
         # Doing this just to the UI get a little bit more beautiful
         self.gridLayout.addWidget(QLabel(), 3, 0)
-        self.gridLayout.addWidget(QLabel(), 4, 0)
+        self.gridLayout.addWidget(self.processingMessage, 4, 0, 1, 3, Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.confirmButtonSimulation, 7, 0, 1, 3, Qt.AlignBottom)
         self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignBottom)
@@ -389,8 +389,8 @@ class MainWindow(QWidget):
         try:
             self.actorUser.findIdfFiles(pathToFolder)
             msg = "Processando arquivos..."
-            msgBox.setText(msg)
-            msgBox.show()
+            self.processingMessage.setText(msg)
+            QApplication.processEvents()
             self.actorUser.runSimulation(pathToFolder, pathToEpw)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setWindowTitle("EPlusPlus-INF")
@@ -425,6 +425,7 @@ class MainWindow(QWidget):
         self.setLineFolderText("")
         self.setLineCasesText("")
         self.setLineEpwText("")
+        self.processingMessage.setText("")
         self.group.setExclusive(False)
         self.randomRB.setChecked(False)
         self.lhsRB.setChecked(False)
