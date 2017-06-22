@@ -109,5 +109,15 @@ class ActorUser(object):
 					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -r %s" % (pathToEpw, absPath)
 					subprocess.call(cmd, shell=True)
 
+	##
+	## @brief      Removes a temporary csv from the folder where the operations
+	##             were made it.
+	##
+	## @param      self          Non static method.
+	## @param      pathToFolder  The path to folder where is the temporary
+	##                           CSV file.
+	##
+	## @return     This is a void method.
+	##
 	def removeTemporaryCsv(self, pathToFolder):
 		self.fileManager.removeTemporaryCsv(pathToFolder)
