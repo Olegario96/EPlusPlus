@@ -516,7 +516,7 @@ class MainWindow(QWidget):
     ##
     def documentationClicked(self):
         if len(self.args) > 1:
-            doc = "../docs/DocumentoRequisitosEplusplus.pdf"
+            doc = "../docs/documentacaoEPlusPlus.pdf"
         else:
-            doc = "./Documents/DocumentoRequisitosEplusplus.pdf"
+            doc = "./Documents/documentacaoEPlusPlus.pdf"
         webbrowser.open("file://"+os.path.abspath(doc))
