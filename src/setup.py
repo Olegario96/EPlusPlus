@@ -27,7 +27,7 @@ images = ["C:\\Users\\GUSTAVO\\EPlusPlus\\media\\img\\title.png",
             			"C:\\Users\\GUSTAVO\\EPlusPlus\\media\\img\\icon.png"]
 
 documents = ["C:\\Users\\GUSTAVO\\EPlusPlus\\docs\\Documento"+
-				"RequisitosEplusplus.pdf"]
+				"documentacaoEPlusPlus.pdf"]
 
 datafiles = [("platforms", platforms),
              ("", dll),
