@@ -35,7 +35,7 @@ datafiles = [("platforms", platforms),
              ("Documents", documents)]
 
 imageformats = glob("C:\\Python34\\Lib\\site-packages\\PyQt5\\"+
-					"plugins\\imageformats\\*")
+			"plugins\\imageformats\\*")
 
 datafiles.append(("imageformats", imageformats))
 
