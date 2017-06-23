@@ -21,11 +21,17 @@ from PyQt5.QtWidgets import QButtonGroup, QLineEdit, QAction, QMenuBar
 ##             all the methods implemented in the logic of the program.
 ##
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, args):
         super(MainWindow, self).__init__()
+        self.args = args
 
         self.firstTime = True
-        self.pathToIcon = "../media/img/icon.png"
+
+        if len(self.args) > 1:
+            self.pathToIcon = "../media/img/icon.png"
+        else:
+            self.pathToIcon = "./Images/icon.png"
+
         self.platformManager = PlatformManager()
         self.actorUser = ActorUser()
 
@@ -60,14 +66,15 @@ class MainWindow(QWidget):
         self.gridLayout = QGridLayout()
 
         self.menuBar = QMenuBar()
-        self.help = self.menuBar.addMenu("Help")
-        self.helpAction = QAction("Documentation", self)
+        self.help = self.menuBar.addMenu("Ajuda")
+        self.helpAction = QAction("Documentação", self)
         self.help.addAction(self.helpAction)
         self.helpAction.triggered.connect(self.documentationClicked)
         self.processingMessage = QLabel()
         self.gridLayout.setMenuBar(self.menuBar)
 
         self.initComponents()
+
 
     ##
     ## @brief      This method is called at the constructor method or
@@ -81,7 +88,10 @@ class MainWindow(QWidget):
     ## @return     This is a void method.
     ##
     def initComponents(self):
-        pixmap = QPixmap("../media/img/title.png")
+        if len(self.args) > 1:
+            pixmap = QPixmap("../media/img/title.png")
+        else:
+            pixmap = QPixmap("./Images/title.png")
         self.logo.setPixmap(pixmap)
 
         if (self.platformManager.isWindows()):
@@ -321,7 +331,7 @@ class MainWindow(QWidget):
             msgBox.exec_()
             self.actorUser.removeTemporaryCsv(pathToFolder)
 
-    ##
+     ##
     ## @brief      This method is actived whenever the "chooseEpwButton" is
     ##             clicked. When this method is activated, a QFileDialog will
     ##             be show to the user and it will be possible to choose a
@@ -430,6 +440,7 @@ class MainWindow(QWidget):
         self.lhsRB.setChecked(False)
         self.group.setExclusive(True)
 
+
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
     ##             with the string equals to the path where the idf file
@@ -504,5 +515,5 @@ class MainWindow(QWidget):
     ## @return     This is a void method.
     ##
     def documentationClicked(self):
-        doc = "../docs/DocumentoRequisitosEplusplus.pdf"
+        doc = "./Documents/DocumentoRequisitosEplusplus.pdf"
         webbrowser.open("file://"+os.path.abspath(doc))
