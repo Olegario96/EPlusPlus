@@ -26,7 +26,7 @@ dll = ["C:\\windows\\syswow64\\MSVCP100.dll",
 images = ["C:\\Users\\GUSTAVO\\EPlusPlus\\media\\img\\title.png",
             			"C:\\Users\\GUSTAVO\\EPlusPlus\\media\\img\\icon.png"]
 
-documents = ["C:\\Users\\GUSTAVO\\EPlusPlus\\docs\\Documento"+
+documents = ["C:\\Users\\GUSTAVO\\EPlusPlus\\docs\\"+
 				"documentacaoEPlusPlus.pdf"]
 
 datafiles = [("platforms", platforms),
