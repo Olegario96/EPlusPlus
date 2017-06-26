@@ -79,7 +79,7 @@ class FileManager(object):
 	## @return     This is a void method
 	##
 	def writeMappedValues(self, mappedValues, pathToFolder):
-		newFile = open(pathToFolder + "/tempFile.csv", 'w')
+		newFile = open(pathToFolder + "/tempFile.csv", 'w', newline="")
 		csvWriter = csv.writer(newFile, delimiter=',', quotechar='|')
 
 		csvWriter.writerow(self.headerCsv)
@@ -94,13 +94,15 @@ class FileManager(object):
 	##             For each sample, a new idf file will be created. This is
 	##             necessary, because each idf represents a case. Next, we
 	##             start to iterate line by line of the idf until find the 
-	##             "@@" sequence, its a specie of a "variable". We can check
+	##             "@@" sequence, its a specie of a template. We can check
 	##             if the "@@" sequence is at the line just checking the first
 	##             member (line[0]) and check if the line is not empty to not
 	##             have problems with exception. If this condition is not 
 	##             attended, this means that is just a normal line and we just
 	##             have to write it.Finally, we map the value using the "index"
-	##             funciton.  the final if is just to bring the comments in the
+	##             function. The index function receives the element that we are
+	##             serching, and returns the position at the list.
+	##             The final if is just to bring the comments in the
 	##             old the idf to the new. We repeat the process for each 
 	##             sample (row in the csv). 
 	##
@@ -130,17 +132,21 @@ class FileManager(object):
 				newFile += ".idf"
 				idfOut = open(newFile, 'w')
 				for line in idfLines:
-					if line and "@@" in line[0]:
-						valueToBeMapped = line[0].replace(" ", "")
-						index = nameColumns.index(valueToBeMapped)
-						newLine = "    " + str(row[index])
-						if len(line) > 1:
-							newLine += line[1]
-						idfOut.write(newLine)
-						
+					if line:
+						if  "@@" in line[0]:
+							valueToBeMapped = line[0].replace(" ", "")
+							index = nameColumns.index(valueToBeMapped)
+							newLine = "    " + str(row[index]) + "," + line[1] + "\n"
+						else:
+							newLine = line[0]
+							if len(line) > 1:
+								newLine += "," + line[1] + "\n"
+							else:
+								newLine += "\n"
 					else:
-						print(line)
-						idfOut.write(line)
+						newLine = "\n"
+
+					idfOut.write(newLine)
 				i += 1
 
 	##
