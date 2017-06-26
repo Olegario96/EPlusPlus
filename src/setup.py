@@ -29,10 +29,16 @@ images = ["C:\\Users\\GUSTAVO\\EPlusPlus\\media\\img\\title.png",
 documents = ["C:\\Users\\GUSTAVO\\EPlusPlus\\docs\\"+
 				"documentacaoEPlusPlus.pdf"]
 
+examples = ["C:\\Users\\GUSTAVO\\EPlusPlus\\files\\"+
+				"\\examples\\baseline2A.idf",
+				"C:\\Users\\GUSTAVO\\EPlusPlus\\files\\"+
+				"\\examples\\vectors.csv"]
+
 datafiles = [("platforms", platforms),
              ("", dll),
              ("Images", images),
-             ("Documents", documents)]
+             ("Documents", documents),
+             ("Examples", examples)]
 
 imageformats = glob("C:\\Python34\\Lib\\site-packages\\PyQt5\\"+
 			"plugins\\imageformats\\*")
