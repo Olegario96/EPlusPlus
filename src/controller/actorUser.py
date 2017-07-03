@@ -5,7 +5,6 @@ from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
 from eplusplus.model import PlatformManager
 from eplusplus.exception import NoIdfException
-from PyQt5.QtWidgets import QMessageBox
 
 ##
 ## @brief      This class represents the controller of the application.
@@ -102,18 +101,19 @@ class ActorUser(object):
 			for file in files:
 				if "LHS" in str(file) or "RANDOM":
 					msgBox = QMessageBox()
-					absPath = str(pathToFolder) +"/" + str(file)
-					output = str(pathToFolder) +"/" + str(file)[:-4]
+					absPath = str(pathToFolder) + "/" + str(file)
+					output = str(pathToFolder) + "/" + str(file)[:-4]
 					cmd = "energyplus -w %s -d %s -r %s" % (pathToEpw, output, absPath)
 					subprocess.call(cmd, shell=False)
 		elif self.platformManager.isWindows():
 			for file in files:
 				if "LHS" in str(file) or "RANDOM":
-					msgBox = QMessageBox()
 					absPath = str(pathToFolder) +"/" + str(file)
-					output = str(pathToFolder) +"/" + str(file)[:-4]
-					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -d %s -r %s" % (pathToEpw, output, absPath)
-					subprocess.call(cmd, shell=False)
+					output = absPath[:-4]
+					cmd = ["C:/EnergyPlusV8-7-0/energyplus.exe", "-w"]
+					cmdContinue = [pathToEpw, "-d", output, "-r", absPath]
+					cmd += cmdContinue
+					subprocess.call(cmd)
 
 	##
 	## @brief      Removes a temporary csv from the folder where the operations
