@@ -5,6 +5,7 @@ from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
 from eplusplus.model import PlatformManager
 from eplusplus.exception import NoIdfException
+from PyQt5.QtWidgets import QMessageBox
 
 ##
 ## @brief      This class represents the controller of the application.
@@ -86,7 +87,8 @@ class ActorUser(object):
 	##             the EPW file informed by the user. For each IDF file inside
 	##             the folder informed by the user, a simulation of the EnergyPlus
 	##             will be executed using the EPW file. It has different
-	##             commands depending of the operating system.
+	##             commands depending of the operating system. The "-d" argument
+	##             is used to create a new folder to each case.
 	##
 	## @param      self          Non static method.
 	## @param      pathToFolder  The path to folder
@@ -98,16 +100,20 @@ class ActorUser(object):
 		files = os.listdir(pathToFolder)
 		if self.platformManager.isLinux():
 			for file in files:
-				if str(file).endswith(".idf"):
+				if "LHS" in str(file) or "RANDOM":
+					msgBox = QMessageBox()
 					absPath = str(pathToFolder) +"/" + str(file)
-					cmd = "energyplus -w %s -r %s" % (pathToEpw, absPath)
-					subprocess.call(cmd, shell=True)
+					output = str(pathToFolder) +"/" + str(file)[:-4]
+					cmd = "energyplus -w %s -d %s -r %s" % (pathToEpw, output, absPath)
+					subprocess.call(cmd, shell=False)
 		elif self.platformManager.isWindows():
 			for file in files:
-				if str(file).endswith(".idf"):
+				if "LHS" in str(file) or "RANDOM":
+					msgBox = QMessageBox()
 					absPath = str(pathToFolder) +"/" + str(file)
-					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -r %s" % (pathToEpw, absPath)
-					subprocess.call(cmd, shell=True)
+					output = str(pathToFolder) +"/" + str(file)[:-4]
+					cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w %s -d %s -r %s" % (pathToEpw, output, absPath)
+					subprocess.call(cmd, shell=False)
 
 	##
 	## @brief      Removes a temporary csv from the folder where the operations
