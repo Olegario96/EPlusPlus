@@ -32,7 +32,9 @@ documents = ["C:\\Users\\GUSTAVO\\EPlusPlus\\docs\\"+
 examples = ["C:\\Users\\GUSTAVO\\EPlusPlus\\files\\"+
 				"\\examples\\baseline2A.idf",
 				"C:\\Users\\GUSTAVO\\EPlusPlus\\files\\"+
-				"\\examples\\vectors.csv"]
+				"\\examples\\vectors.csv",
+				"C:\\Users\\GUSTAVO\\EPlusPlus\\files\\"+
+				"\\examples\\BRA_SC_Florianopolis.838970_INMET.epw"]
 
 datafiles = [("platforms", platforms),
              ("", dll),
