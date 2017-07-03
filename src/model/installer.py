@@ -34,7 +34,7 @@ class Installer(object):
 	## @return     This is a void method
 	##
 	def installEplusLinux(self):
-		subprocess.call("./scripts/installEplus.sh", shell=True)
+		subprocess.call("./scripts/installEplus.sh", shell=False)
 
 	##
 	## @brief      This function creates a subprocess responsible to execute
@@ -74,7 +74,7 @@ class Installer(object):
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
-		subprocess.call(path, shell=True)
+		subprocess.call(path, shell=False)
 
 	##
 	## @brief      This function was designed for Windows platform. This
@@ -97,4 +97,4 @@ class Installer(object):
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
-		subprocess.call(path, shell=True)
+		subprocess.call(path, shell=False)
