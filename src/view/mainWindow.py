@@ -1,9 +1,10 @@
 import os
+import sys
 import ctypes
 import webbrowser
 from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
-from eplusplus.exception import ColumnException, NoIdfException
+from eplusplus.exception import ColumnException, NoIdfException, InstallException
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
@@ -391,7 +392,7 @@ class MainWindow(QWidget):
         except ColumnException as e:
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setWindowTitle("EPlusPlus-ERR")
-            msg = "O arquivo csv ou o arquivo idf não estão no formato correto!"
+            msg = str(e)
             msgBox.setText(msg)
             msgBox.exec_()
             self.actorUser.removeTemporaryCsv(pathToFolder)
@@ -432,20 +433,46 @@ class MainWindow(QWidget):
         except NoIdfException as e:
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setWindowTitle("EPlusPlus-ERR")
-            msg = "Não há nenhum arquivo IDF na pasta informada!"
+            msg = str(e)
             msgBox.setText(msg)
             msgBox.exec_()
 
     ##
-    ## @brief      Check the "checkAndInstall" of the class "ActorUser"
-    ##             for more information.
+    ## @brief      This method is responsible for check if all tools are
+    ##             installed on the curren machine. If not, a message will
+    ##             be shown to the user and the installation will start. If
+    ##             by any means, a problem occurs, a error message will appear
+    ##             at the screen. If all goes well, a mensagem of sucess will
+    ##             be show.
     ##
-    ## @param      self  The object
+    ## @param      self  Non static method
     ##
     ## @return     This is a void method
     ##
     def checkAndInstall(self):
-        self.actorUser.checkAndInstall()
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle("EPlusPlus-INF")
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
+        msg = "O EPlusPlus irá agora instalar as ferramentas necessárias para"  
+        msg += " o seu correto funcionamento!"
+
+        if not self.actorUser.checkTools():
+            try:
+                msgBox.setText(msg)
+                msgBox.setIcon(QMessageBox.Information)
+                msgBox.exec_()
+                self.actorUser.checkAndInstall()
+                msg = "Instalações feitas com sucesso!"
+                msgBox.setText(msg)
+                msgBox.exec_()
+            except InstallException as e:
+                msbBox = QMessageBox()
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setWindowTitle("EPlusPlus-ERR")
+                msg = str(e)
+                msgBox.setText(msg)
+                msgBox.exec_()
+                sys.exit()
 
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
