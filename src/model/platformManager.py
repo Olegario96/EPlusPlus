@@ -74,7 +74,7 @@ class PlatformManager(object):
 		absPath = os.path.abspath(exc)
 		if os.path.isfile(absPath):
 			try:
-				process = subprocess.Popen(exc, shell=True)
+				process = subprocess.Popen(exc, shell=False)
 				process.kill()
 				return True
 			except:
@@ -96,7 +96,7 @@ class PlatformManager(object):
 	##
 	def checkToolLinux(self, exc):
 		try:
-			process = subprocess.Popen(exc, shell=True)
+			process = subprocess.Popen(exc, shell=False)
 			process.kill()
 			return True
 		except:
