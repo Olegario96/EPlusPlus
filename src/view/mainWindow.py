@@ -519,4 +519,3 @@ class MainWindow(QWidget):
         self.randomRB.setChecked(False)
         self.lhsRB.setChecked(False)
         self.group.setExclusive(True)
-
