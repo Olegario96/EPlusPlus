@@ -51,7 +51,7 @@ class Installer(object):
 	## @return     This is a void function.
 	##
 	def installDBrowserLinux(self):
-		subprocess.call("./scripts/installDBrowser.sh", shell=True)
+		subprocess.call("./scripts/installDBrowser.sh", shell=False)
 
 	##
 	## @brief      This function was designed for Windows platform. This
