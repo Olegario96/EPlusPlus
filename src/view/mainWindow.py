@@ -75,7 +75,6 @@ class MainWindow(QWidget):
 
         self.initComponents()
 
-
     ##
     ## @brief      This method is called at the constructor method or
     ##             a cancel button is clicked to go back to the first screen.
@@ -167,6 +166,16 @@ class MainWindow(QWidget):
         self.gridLayout.addWidget(self.confirmButtonCases, 7, 0, 1, 3, Qt.AlignTop)
         self.gridLayout.addWidget(self.cancelButton, 8, 0, 1, 3, Qt.AlignTop)
 
+    ##
+    ## @brief      This method is actived whenever the "simulationButton" is
+    ##             pressed. First of all, it remove all components from
+    ##             the window. After that it justs configures labels,
+    ##             lineTexts and buttons into the grid layout.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method
+    ##
     def simulationButtonClicked(self):
         self.clearAll()
 
