@@ -108,6 +108,8 @@ class MainWindow(QWidget):
             self.chooseEpwButton.clicked.connect(self.chooseEpwButtonClicked)
             self.confirmButtonSimulation.clicked.connect(self.confirmButtonSimulationClicked)
 
+            self.checkAndInstall()
+
             self.setLayout(self.gridLayout)
             self.setFixedSize(650, 250)
             self.setWindowTitle("EPlusPlus")
@@ -433,6 +435,17 @@ class MainWindow(QWidget):
             msg = "Não há nenhum arquivo IDF na pasta informada!"
             msgBox.setText(msg)
             msgBox.exec_()
+
+    ##
+    ## @brief      Check the "checkAndInstall" of the class "ActorUser"
+    ##             for more information.
+    ##
+    ## @param      self  The object
+    ##
+    ## @return     This is a void method
+    ##
+    def checkAndInstall(self):
+        self.actorUser.checkAndInstall()
 
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
