@@ -1,6 +1,5 @@
 import os
 import csv
-from eplusplus.exception import ColumnException
 
 ##
 ## @brier This class is responsible for get the values from the csv file
@@ -11,9 +10,7 @@ from eplusplus.exception import ColumnException
 ##        class also writes the "mappedValues" obtained from "mapValues" method
 ##        of the Statiscal class. The import of the os is used to get the name
 ##        of the idf file. The csv library is  needed cause we need to open the
-##        csv. The ColumnException is used when the csv and idf file doesn't
-##        match (i.e. the idf file require values that are in the csv file.)
-##
+##        csv.
 ##
 class FileManager(object):
 
@@ -93,18 +90,18 @@ class FileManager(object):
 	##             it reads line by line of the csv, which represents a sample.
 	##             For each sample, a new idf file will be created. This is
 	##             necessary, because each idf represents a case. Next, we
-	##             start to iterate line by line of the idf until find the 
+	##             start to iterate line by line of the idf until find the
 	##             "@@" sequence, its a specie of a template. We can check
 	##             if the "@@" sequence is at the line just checking the first
 	##             member (line[0]) and check if the line is not empty to not
-	##             have problems with exception. If this condition is not 
+	##             have problems with exception. If this condition is not
 	##             attended, this means that is just a normal line and we just
 	##             have to write it.Finally, we map the value using the "index"
 	##             function. The index function receives the element that we are
 	##             serching, and returns the position at the list.
 	##             The final if is just to bring the comments in the
-	##             old the idf to the new. We repeat the process for each 
-	##             sample (row in the csv). 
+	##             old the idf to the new. We repeat the process for each
+	##             sample (row in the csv).
 	##
 	## @param      self          Non static method
 	## @param      pathToIdf     The path to idf
@@ -153,7 +150,7 @@ class FileManager(object):
 	## @brief      Removes a temporary csv.
 	##
 	## @param      self          Non static method.
-	## @param      pathToFolder  The path to folder where the temp file is 
+	## @param      pathToFolder  The path to folder where the temp file is
 	##                           located.
 	##
 	## @return     This is a void method.
