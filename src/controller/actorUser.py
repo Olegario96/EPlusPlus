@@ -22,6 +22,40 @@ class ActorUser(object):
 		self.platformManager = PlatformManager()
 
 	##
+	## @brief      This method will check what is the OS that is running on 
+	##             the machine. After that, will check if both tools are 
+	##             installed on the computer. If not, return false. True,
+	##             otherwiser.
+	##
+	## @param      self  Non static method.
+	##
+	## @return     Return if the current machine has EnergyPlus and SQLiteBrowser
+	##             installed.
+	##
+	def checkTools(self):
+		if self.platformManager.isLinux():
+			hasEnergyPlus = self.platformManager.checkToolLinux("runenergyplus")
+			hasSQLiteBrowser = self.platformManager.checkToolLinux("sqlitebrowser")
+			return hasEnergyPlus and hasSQLiteBrowser
+		if self.platformManager.isWindows():
+			pathEplus = "C:\EnergyPlusV8-7-0\energyplus.exe"
+			pathSQLiteBrowser = "C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"
+			hasEnergyPlus = self.platformManager.checkToolLinux(pathEplus)
+			hasSQLiteBrowser = self.platformManager.checkToolLinux(pathSQLiteBrowser)
+			return hasEnergyPlus and hasSQLiteBrowser
+
+	##
+	## @brief      Check "checkAndInstall"'s documentation method of the
+	##             class "ActorUser" for more information.
+	##             
+	## @param      self  Non static method.
+	##
+	## @return     This is a void method.
+	##
+	def checkAndInstall(self):
+		self.platformManager.checkAndInstall()
+
+	##
 	## @brief      This method receives all parameters through UI.
 	##             We don't need to check each value of the args, because
 	##             this was already made at the UI. Depending of the method
