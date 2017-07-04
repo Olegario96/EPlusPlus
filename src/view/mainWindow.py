@@ -52,10 +52,10 @@ class MainWindow(QWidget):
         self.lineIdf = LineEdit(self)
         self.lineCsv = LineEdit(self)
         self.lineFolder = LineEdit(self)
+        self.lineEpw = LineEdit(self)
         self.lineCases = QLineEdit()
         self.validatorCases = QIntValidator(1, 9999999, self)
         self.lineCases.setValidator(self.validatorCases)
-        self.lineEpw = LineEdit(self)
 
         self.group = QButtonGroup()
         self.lhsRB = QRadioButton("Latin Hypercube Sampling")
@@ -289,49 +289,6 @@ class MainWindow(QWidget):
             self.generateCases()
 
     ##
-    ## @brief      This method takes all values informed by the user through
-    ##             the lineEdit fields. After analyze the sampling method
-    ##             choosed, the UI will call the actorUser to generate
-    ##             the cases. If all happens as it should, then a QmessageBox
-    ##             will inform the user. Otherwise, if a "ColumnException"
-    ##             raise from the the "actorUser", the user will be informed
-    ##             that the Csv or the Idf are not matching.
-    ##
-    ## @param      self  Non static method.
-    ##
-    ## @return     This is a void method.
-    ##
-    def generateCases(self):
-        pathToIdf = self.lineIdf.text()
-        pathToCsv = self.lineCsv.text()
-        pathToFolder = self.lineFolder.text()
-        sampleSize = int(self.lineCases.text())
-        msgBox = QMessageBox()
-        msgBox.setWindowIcon(QIcon(self.pathToIcon))
-        msg = ""
-
-        if self.lhsRB.isChecked():
-            method = "LHS"
-        else:
-            method = "RANDOM"
-
-        try:
-            self.actorUser.generateCases(pathToIdf, pathToCsv, pathToFolder, sampleSize, method)
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setWindowTitle("EPlusPlus-INF")
-            msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
-            msgBox.setText(msg)
-            msgBox.exec_()
-            self.cancelButtonClicked()
-        except ColumnException as e:
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setWindowTitle("EPlusPlus-ERR")
-            msg = "O arquivo csv ou o arquivo idf não estão no formato correto!"
-            msgBox.setText(msg)
-            msgBox.exec_()
-            self.actorUser.removeTemporaryCsv(pathToFolder)
-
-     ##
     ## @brief      This method is actived whenever the "chooseEpwButton" is
     ##             clicked. When this method is activated, a QFileDialog will
     ##             be show to the user and it will be possible to choose a
@@ -375,6 +332,66 @@ class MainWindow(QWidget):
             self.runSimulation()
 
     ##
+    ## @brief      This method is used every time the "Documentation" button
+    ##             is clicked at the menu bar. This method open the manual
+    ##             of the program in pdf format at the default browser of the
+    ##             current user.
+    ##
+    ## @param      self  Non static method
+    ##
+    ## @return     This is a void method.
+    ##
+    def documentationClicked(self):
+        if len(self.args) > 1:
+            doc = "../docs/documentacaoEPlusPlus.pdf"
+        else:
+            doc = "./Documents/documentacaoEPlusPlus.pdf"
+        webbrowser.open("file://"+os.path.abspath(doc))
+
+    ##
+    ## @brief      This method takes all values informed by the user through
+    ##             the lineEdit fields. After analyze the sampling method
+    ##             choosed, the UI will call the actorUser to generate
+    ##             the cases. If all happens as it should, then a QmessageBox
+    ##             will inform the user. Otherwise, if a "ColumnException"
+    ##             raise from the the "actorUser", the user will be informed
+    ##             that the Csv or the Idf are not matching.
+    ##
+    ## @param      self  Non static method.
+    ##
+    ## @return     This is a void method.
+    ##
+    def generateCases(self):
+        pathToIdf = self.lineIdf.text()
+        pathToCsv = self.lineCsv.text()
+        pathToFolder = self.lineFolder.text()
+        sampleSize = int(self.lineCases.text())
+        msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon(self.pathToIcon))
+        msg = ""
+
+        if self.lhsRB.isChecked():
+            method = "LHS"
+        else:
+            method = "RANDOM"
+
+        try:
+            self.actorUser.generateCases(pathToIdf, pathToCsv, pathToFolder, sampleSize, method)
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setWindowTitle("EPlusPlus-INF")
+            msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
+            msgBox.setText(msg)
+            msgBox.exec_()
+            self.cancelButtonClicked()
+        except ColumnException as e:
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setWindowTitle("EPlusPlus-ERR")
+            msg = "O arquivo csv ou o arquivo idf não estão no formato correto!"
+            msgBox.setText(msg)
+            msgBox.exec_()
+            self.actorUser.removeTemporaryCsv(pathToFolder)
+
+    ##
     ## @brief      At first lines, we transform the content informed by the
     ##             user at the current screen into strings. After that, we
     ##             create a QMessageBox to show important information. Then
@@ -413,33 +430,6 @@ class MainWindow(QWidget):
             msg = "Não há nenhum arquivo IDF na pasta informada!"
             msgBox.setText(msg)
             msgBox.exec_()
-
-    ##
-    ## @brief      This method removes every component at the current window,
-    ##             except for the layout. Also, this method clear all lineText
-    ##             attributes and clear the values of the radio buttons. The
-    ##             "setExclusive" False and "setExclusive" True is needed to
-    ##             clear the values of the radio button components.
-    ##
-    ## @param      self  Non static method.
-    ##
-    ## @return     This is a void method.
-    ##
-    def clearAll(self):
-        for component in reversed(range(self.gridLayout.count())):
-            self.gridLayout.itemAt(component).widget().setParent(None)
-
-        self.setLineIdfText("")
-        self.setLineCsvText("")
-        self.setLineFolderText("")
-        self.setLineCasesText("")
-        self.setLineEpwText("")
-        self.processingMessage.setText("")
-        self.group.setExclusive(False)
-        self.randomRB.setChecked(False)
-        self.lhsRB.setChecked(False)
-        self.group.setExclusive(True)
-
 
     ##
     ## @brief      This method sets the first lineText of the 2nd screen
@@ -505,18 +495,28 @@ class MainWindow(QWidget):
         self.lineEpw.setText(string)
 
     ##
-    ## @brief      This method is used every time the "Documentation" button
-    ##             is clicked at the menu bar. This method open the manual
-    ##             of the program in pdf format at the default browser of the
-    ##             current user.
+    ## @brief      This method removes every component at the current window,
+    ##             except for the layout. Also, this method clear all lineText
+    ##             attributes and clear the values of the radio buttons. The
+    ##             "setExclusive" False and "setExclusive" True is needed to
+    ##             clear the values of the radio button components.
     ##
-    ## @param      self  Non static method
+    ## @param      self  Non static method.
     ##
     ## @return     This is a void method.
     ##
-    def documentationClicked(self):
-        if len(self.args) > 1:
-            doc = "../docs/documentacaoEPlusPlus.pdf"
-        else:
-            doc = "./Documents/documentacaoEPlusPlus.pdf"
-        webbrowser.open("file://"+os.path.abspath(doc))
+    def clearAll(self):
+        for component in reversed(range(self.gridLayout.count())):
+            self.gridLayout.itemAt(component).widget().setParent(None)
+
+        self.setLineIdfText("")
+        self.setLineCsvText("")
+        self.setLineFolderText("")
+        self.setLineCasesText("")
+        self.setLineEpwText("")
+        self.processingMessage.setText("")
+        self.group.setExclusive(False)
+        self.randomRB.setChecked(False)
+        self.lhsRB.setChecked(False)
+        self.group.setExclusive(True)
+
