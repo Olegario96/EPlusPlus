@@ -60,7 +60,8 @@ class Installer(object):
 	##             file called "EnergyPlusInstaller.exe" where writes the
 	##             content that was read from the repository. Then, we create
 	##             a process do proced with the installation. The method just
-	##             ends when the installation is concluded.
+	##             ends when the installation is concluded. At the end, just
+	##             removes the program installer.
 	##
 	## @param      Non static method
 	##
@@ -75,6 +76,7 @@ class Installer(object):
 
 		path = os.path.abspath(fileName)
 		subprocess.call(path, shell=False)
+		os.remove(path)
 
 	##
 	## @brief      This function was designed for Windows platform. This
@@ -83,7 +85,8 @@ class Installer(object):
 	##             a binary file called "EnergyPlusInstaller.exe" where writes
 	##             the content that was read from the repository. Then, we
 	##             create a process do proced with the installation. The method
-	##             just ends when the installation is concluded.
+	##             just ends when the installation is concluded. At the end, just
+	##             removes the program installer.
 	##
 	## @param      Non static method
 	##
@@ -98,3 +101,4 @@ class Installer(object):
 
 		path = os.path.abspath(fileName)
 		subprocess.call(path, shell=False)
+		os.remove(path)
