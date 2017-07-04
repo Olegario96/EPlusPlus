@@ -3,7 +3,6 @@ import ctypes
 import webbrowser
 from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
-from eplusplus.model import PlatformManager
 from eplusplus.exception import ColumnException, NoIdfException
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
@@ -32,7 +31,6 @@ class MainWindow(QWidget):
         else:
             self.pathToIcon = "./Images/icon.png"
 
-        self.platformManager = PlatformManager()
         self.actorUser = ActorUser()
 
         self.logo = QLabel()
@@ -92,10 +90,6 @@ class MainWindow(QWidget):
         else:
             pixmap = QPixmap("./Images/title.png")
         self.logo.setPixmap(pixmap)
-
-        if (self.platformManager.isWindows()):
-            appid = 'LabEEE.EPlusPlus.V0.8'
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
 
         self.gridLayout.addWidget(self.logo, 0, 0)
         self.gridLayout.addWidget(self.casesButton, 1, 0)
