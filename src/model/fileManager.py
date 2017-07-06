@@ -125,8 +125,8 @@ class FileManager(object):
 		i = 0
 		for row in csvReader:
 			if row:
-				newFile = pathToIdf[:-4] + "_" + method.upper() + "_" + str(i)
-				newFile += ".idf"
+				newFile = pathToFolder + "/" + os.path.basename(pathToIdf[:-4])
+				newFile += "_" + method.upper() + "_" + str(i) + ".idf"
 				idfOut = open(newFile, 'w')
 				for line in idfLines:
 					if line:
