@@ -34,7 +34,8 @@ class Installer(object):
 	## @return     This is a void method
 	##
 	def installEplusLinux(self):
-		subprocess.call("./scripts/installEplus.sh", shell=False)
+		subprocess.run(["chmod", "770", "./eplusplus/scripts/installEplus.sh"])
+		subprocess.call("./eplusplus/scripts/installEplus.sh", shell=False)
 
 	##
 	## @brief      This function creates a subprocess responsible to execute
@@ -51,7 +52,8 @@ class Installer(object):
 	## @return     This is a void function.
 	##
 	def installDBrowserLinux(self):
-		subprocess.call("./scripts/installDBrowser.sh", shell=False)
+		subprocess.run(["chmod", "770", "./eplusplus/scripts/installDBrowser.sh"])
+		subprocess.call("./eplusplus/scripts/installDBrowser.sh", shell=False)
 
 	##
 	## @brief      This function was designed for Windows platform. This
