@@ -97,7 +97,7 @@ SizingPeriod:DesignDay,
     0;                       !- Sky Clearness
 
 SizingPeriod:DesignDay,
-    Florianopolis_verão,     !- Name
+    Florianopolis_verao,     !- Name
     1,                       !- Month
     21,                      !- Day of Month
     SummerDesignDay,         !- Day Type
