@@ -1,5 +1,6 @@
 import os
 import csv
+from eplusplus.exception  import ColumnException
 
 ##
 ## @brier This class is responsible for get the values from the csv file
@@ -132,7 +133,11 @@ class FileManager(object):
 					if line:
 						if  "@@" in line[0]:
 							valueToBeMapped = line[0].replace(" ", "")
-							index = nameColumns.index(valueToBeMapped)
+							try:
+								index = nameColumns.index(valueToBeMapped)
+							except Exception as e:
+								msg = "Campo do IDF não encontrado no CSV!"
+								raise ColumnException(msg)
 							newLine = "    " + str(row[index]) + "," + line[1] + "\n"
 						else:
 							newLine = line[0]
