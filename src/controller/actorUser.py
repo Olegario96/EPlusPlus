@@ -22,8 +22,8 @@ class ActorUser(object):
 		self.platformManager = PlatformManager()
 
 	##
-	## @brief      This method will check what is the OS that is running on 
-	##             the machine. After that, will check if both tools are 
+	## @brief      This method will check what is the OS that is running on
+	##             the machine. After that, will check if both tools are
 	##             installed on the computer. If not, return false. True,
 	##             otherwiser.
 	##
@@ -47,7 +47,7 @@ class ActorUser(object):
 	##
 	## @brief      Check "checkAndInstall"'s documentation method of the
 	##             class "ActorUser" for more information.
-	##             
+	##
 	## @param      self  Non static method.
 	##
 	## @return     This is a void method.
@@ -134,10 +134,9 @@ class ActorUser(object):
 		if self.platformManager.isLinux():
 			for file in files:
 				if "LHS" in str(file) or "RANDOM":
-					msgBox = QMessageBox()
 					absPath = str(pathToFolder) + "/" + str(file)
-					output = str(pathToFolder) + "/" + str(file)[:-4]
-					cmd = "energyplus -w %s -d %s -r %s" % (pathToEpw, output, absPath)
+					output = absPath[:-4]
+					cmd = ["energyplus", "-w", pathToEpw, "-d", output, "-r", absPath]
 					subprocess.call(cmd, shell=False)
 		elif self.platformManager.isWindows():
 			for file in files:
