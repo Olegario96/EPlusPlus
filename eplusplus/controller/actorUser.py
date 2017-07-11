@@ -4,6 +4,7 @@ import subprocess
 from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
 from eplusplus.model import PlatformManager
+from eplusplus.model import ProcessManager
 from eplusplus.exception import NoIdfException
 
 ##
@@ -20,6 +21,7 @@ class ActorUser(object):
 		self.fileManager = FileManager()
 		self.statiscal = Statiscal()
 		self.platformManager = PlatformManager()
+		self.procesManager = ProcessManager()
 
 	##
 	## @brief      This method will check what is the OS that is running on
@@ -130,23 +132,7 @@ class ActorUser(object):
 	## @return     This is a void method
 	##
 	def runSimulation(self, pathToFolder, pathToEpw):
-		files = os.listdir(pathToFolder)
-		if self.platformManager.isLinux():
-			for file in files:
-				if "LHS" in str(file) or "RANDOM":
-					absPath = str(pathToFolder) + "/" + str(file)
-					output = absPath[:-4]
-					cmd = ["energyplus", "-w", pathToEpw, "-d", output, "-r", absPath]
-					subprocess.call(cmd, shell=False)
-		elif self.platformManager.isWindows():
-			for file in files:
-				if "LHS" in str(file) or "RANDOM":
-					absPath = str(pathToFolder) +"/" + str(file)
-					output = absPath[:-4]
-					cmd = ["C:/EnergyPlusV8-7-0/energyplus.exe", "-w"]
-					cmdContinue = [pathToEpw, "-d", output, "-r", absPath]
-					cmd += cmdContinue
-					subprocess.call(cmd)
+		self.procesManager.executeTasks(self.platformManager, pathToEpw, pathToFolder, self.fileManager)
 
 	##
 	## @brief      Removes a temporary csv from the folder where the operations
