@@ -23,8 +23,8 @@ class Installer(object):
 	## @brief      This function creates a subprocess responsible to execute
 	##             the bash script that installs the EnergyPlus tool. The
 	##             script lies on the "scripts" folder and the method just ends
-	##             when the installation is concluded. This function was designed
-	##             to the Linux platforms.OBS: when the eplusplus
+	##             when the installation is concluded. This function was
+	##             designed  to the Linux platforms.OBS: when the eplusplus
 	##             program is running to install the tools, it must be with
 	##             root permision, since the installtion of EnergyPlus needs
 	##             of the root permission.
@@ -52,7 +52,8 @@ class Installer(object):
 	## @return     This is a void function.
 	##
 	def installDBrowserLinux(self):
-		subprocess.run(["chmod", "770", "./eplusplus/scripts/installDBrowser.sh"])
+		cmd = "chmod", "770", "./eplusplus/scripts/installDBrowser.sh"
+		subprocess.run([cmd])
 		subprocess.call("./eplusplus/scripts/installDBrowser.sh", shell=False)
 
 	##
@@ -73,7 +74,8 @@ class Installer(object):
 		url = "https://github.com/NREL/EnergyPlus/releases/download/v8.7.0/"
 		url += "Energyplus-8.7.0-78a111df4a-Windows-x86_64.exe"
 		fileName = "EnergyPlusInstaller.exe"
-		with urllib.request.urlopen(url) as response, open(fileName, "wb") as outFile:
+		outFile = open(fileName, "wb")
+		with urllib.request.urlopen(url) as response:
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
@@ -87,8 +89,8 @@ class Installer(object):
 	##             a binary file called "EnergyPlusInstaller.exe" where writes
 	##             the content that was read from the repository. Then, we
 	##             create a process do proced with the installation. The method
-	##             just ends when the installation is concluded. At the end, just
-	##             removes the program installer.
+	##             just ends when the installation is concluded. At the end,
+	##             just removes the program installer.
 	##
 	## @param      Non static method
 	##
@@ -98,7 +100,8 @@ class Installer(object):
 		url = "https://github.com/sqlitebrowser/sqlitebrowser/releases/"
 		url += "download/v3.9.1/DB.Browser.for.SQLite-3.9.1-win64.exe"
 		fileName = "sqlitebrowserInstaller.exe"
-		with urllib.request.urlopen(url) as response, open(fileName, "wb") as outFile:
+		outFile = open(fileName, "wb")
+		with urllib.request.urlopen(url) as response:
 			shutil.copyfileobj(response, outFile)
 
 		path = os.path.abspath(fileName)
