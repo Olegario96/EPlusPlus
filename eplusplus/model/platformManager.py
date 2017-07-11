@@ -169,13 +169,14 @@ class PlatformManager(object):
 	##
 	def checkAndInstallWindows(self):
 		msg = "Please, manually install the following tool: "
-		path = "C:\Program Files\DB Browser for SQLite\DB Browser for SQLite.exe"
-		if not self.checkToolWindows("C:\EnergyPlusV8-7-0\energyplus.exe"):
+		path = "C:/EnergyPlusV8-7-0/energyplus.exe"
+		if not self.checkToolWindows(path):
 			self.installer.installEplusWindows()
-			if not self.checkToolWindows("C:\EnergyPlusV8-7-0\energyplus.exe"):
+			if not self.checkToolWindows(path):
 				msg += "EnergyPlusV8-7-0"
 				raise InstallException(msg)
 
+		path = "C:/Program Files/DB Browser for SQLite/DB Browser for SQLite.exe"
 		if not self.checkToolWindows(path):
 			self.installer.installDBrowserWindows()
 			if not self.checkToolWindows(path):
