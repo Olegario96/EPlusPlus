@@ -49,18 +49,16 @@ class ProcessManager(object):
 		if platformManager.isWindows():
 			for i in range(0, len(self.idfFiles)):
 				idfFile = self.idfFiles.pop()
-				absPath = str(pathToFolder) +"/" + str(idfFile)
+				absPath = str(pathToFolder) + "/" + str(idfFile)
 				output = absPath[:-4]
-				cmd = "C:/EnergyPlusV8-7-0/energyplus.exe -w {} -d {} -r {}"
-				cmd = cmd.format(pathToEpw, output, absPath)
-				tasks.append([cmd])
+				cmd = ["C:/EnergyPlusV8-7-0/energyplus.exe", "-w", pathToEpw, "-d", output, "-r", absPath]
+				tasks.append(cmd)
 		elif platformManager.isLinux():
 			for i in range(0, len(self.idfFiles)):
 					idfFile = self.idfFiles.pop()
 					absPath = str(pathToFolder) + "/" + str(idfFile)
 					output = absPath[:-4]
-					cmd = "runenergyplus -w {} -d {} -r {}"
-					cmd = cmd.format(pathToEpw, output, absPath)
+					cmd = ["runenergyplus", "-w", pathToEpw, "-d", output, "-r", absPath]
 					tasks.append(cmd)
 
 		self.tasks = tasks
@@ -106,7 +104,7 @@ class ProcessManager(object):
 			except Exception as e:
 				continue
 			if task:
-				process = subprocess.Popen([task], shell=False)
+				process = subprocess.Popen(task)
 				processes.append(process)
 
 		for process in processes:
