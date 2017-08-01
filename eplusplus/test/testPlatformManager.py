@@ -21,7 +21,8 @@ class TestPlatformManager(unittest.TestCase):
 	##
 	## @return     This is a void function.
 	##
-	def testCheckAndInstallLinux(self, pM):
+	def testCheckAndInstallLinux(self):
+		pM = PlatformManager()
 		self.assertEqual(pM.checkAndInstall(), True)
 
 	##
@@ -35,5 +36,9 @@ class TestPlatformManager(unittest.TestCase):
 	##
 	## @return     This is a void function.
 	##
-	def testCheckAndInstallWindows(self, pM):
+	def testCheckAndInstallWindows(self):
+		pM = PlatformManager()
 		self.assertEqual(pM.checkAndInstall(), True)
+
+if __name__ == '__main__':
+	unittest.main()
