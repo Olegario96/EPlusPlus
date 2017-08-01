@@ -1,7 +1,7 @@
 import os
 import csv
 from eplusplus.exception  import ColumnException
-from eplusplus.exception import IdfNotFormatted
+from eplusplus.exception import NoCsvException
 
 ##
 ## @brier This class is responsible for get the values from the csv file
@@ -227,6 +227,6 @@ class FileManager(object):
 			msg = 'Não foi possível encontrar o csv para inserir no banco'
 			msg += ' de dados! Por favor, verifique se o IDF não possui objetos'
 			msg += ' expandidos ou algum outro erro de formatação.'
-			raise IdfNotFormatted(msg)
+			raise NoCsvException(msg)
 		else:
 			return header
