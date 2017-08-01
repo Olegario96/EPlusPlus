@@ -23,6 +23,12 @@ from PyQt5.QtWidgets import QButtonGroup, QLineEdit, QAction, QMenuBar
 class MainWindow(QWidget):
     def __init__(self, args):
         super(MainWindow, self).__init__()
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowTitle("EPlusPlus-WAR")
+        msgBox.setText("ATENÇÃO! Para que o programa funcione corretamente, não deve haver espaços em branco tanto no nome de pastas quanto dos arquivos. Para mais informações sobre esta restrição, por favor, cheque a documentação.")
+        msgBox.exec_()
+
         self.args = args
 
         self.firstTime = True
@@ -458,7 +464,7 @@ class MainWindow(QWidget):
                 msgBox.setText(msg)
                 msgBox.exec_()
             except InstallException as e:
-                msbBox = QMessageBox()
+                msgBox = QMessageBox()
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setWindowTitle("EPlusPlus-ERR")
                 msg = str(e)
