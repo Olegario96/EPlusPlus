@@ -1,6 +1,7 @@
 import os
 import csv
 from eplusplus.exception  import ColumnException
+from eplusplus.exception import IdfNotFormatted
 
 ##
 ## @brier This class is responsible for get the values from the csv file
@@ -183,5 +184,49 @@ class FileManager(object):
 			lhsOrRandom = "LHS" in str(file) or "RANDOM" in str(file)
 			if str(file).endswith(".idf") and lhsOrRandom:
 				idfFiles.append(file)
-
+	
 		return idfFiles
+
+	##
+	## @brief      This method gets the header from the csv's result AKA:
+	##             'eplusout.csv'. This method is necessary to generate
+	##             dynamic names for the columns in the Database. This
+	##             method list the files and directories in the folder
+	##             of the csv. After that, test if each member of the
+	##             list is a directory. If so, will search in this 
+	##             folder for the 'eplusout.csv' file. When finds this
+	##             file, get the header from the csv and break the 
+	##             loops. If the method not find the csv file, this
+	##             means that an error occurred during the energyplus
+	##             simulation, then, a exception will be thrown.
+	##
+	## @param      self          Non static method
+	## @param      pathToFolder  The path to folder containing the IDF files.
+	##
+	## @return     The header from csv containing the name of the columns. Can
+	##             Throw a exception saying that no CSV was found and a
+	##             error occurred during the simulation.
+	##
+	def getHeaderFromCsv(self, pathToFolder):
+		header = []
+		directories = os.listdir(pathToFolder)
+		directories = [pathToFolder +'/' + directory for directory in directories]
+		for directory in directories:
+			lhsOrRandom = "LHS" in str(directory) or "RANDOM" in str(directory)
+			if os.path.isdir(directory) and lhsOrRandom:
+				files = os.listdir(directory)
+				for file in files:
+					if str(file).endswith('eplusout.csv'):
+						with open(directory + '/' + file, 'r') as csvFile:
+							csvReader = csv.reader(csvFile, delimiter=',')
+							header = csvReader.__next__()
+							break
+				break
+
+		if not header:
+			msg = 'Não foi possível encontrar o csv para inserir no banco'
+			msg += ' de dados! Por favor, verifique se o IDF não possui objetos'
+			msg += ' expandidos ou algum outro erro de formatação.'
+			raise IdfNotFormatted(msg)
+		else:
+			return header
