@@ -15,6 +15,7 @@ from eplusplus.exception import NoIdfException
 ##             eplusplus, the basic methods are generate the cases and
 ##             run the simulation.
 ##
+class ActorUser(object):
 	def __init__(self):
 		super(ActorUser, self).__init__()
 		self.fileManager = FileManager()
