@@ -1,5 +1,12 @@
 import sqlite3
 
+##
+## @brief      This class is responsible to iterate with the database of the
+##             EPlusPlus. The methods are very simple, including create the 
+##             database, create the tables, and insert the data in the base.
+##             The sqlite3 import is necessary, since we are working with this
+##             specific database.
+##
 class ActorDB(object):
 	def __init__(self):
 		super(ActorDB, self).__init__()
@@ -20,13 +27,32 @@ class ActorDB(object):
 		conn.close()		
 
 	##
-	## @brief      Creates a table.
+	## @brief      This method is responsible for create the table in the 
+	##             database and to insert all the data from the last simulation.
+	##             Its important to explain that for each batch of simulation,
+	##             we create a new table. So, for standardize the name of the
+	##             tables each table start with the name 'simualcao' 
+	##             concatenated with the number of the simulation. Doing this,
+	##             the user will be able to compare new and old simulations.
+	##             So this function creates a query using the name of the table
+	##             concatenated with the number of the simulation and append
+	##             a '%s' for each column in the csvHeader. Finally, it will
+	##             create a column 'nomeArquivo' that references each 
+	##             file was responsible for that results. Then the cursor
+	##             just executes the query and we commit and close the 
+	##             connection.
 	##
-	## @param      self            The object
+	## @param      self            Non static method
+	## 
 	## @param      pathToDataBase  The path to data base
-	## @param      csvHeader       The csv header
+	## 
+    ## @param      header          The header from the csv files result. 
+	##                             Obtained from the function 
+	##                             'getHeaderFromCsvResult' of the 'fileManager'
+	##                             class. See its documentation for more info. 
+	##                             
 	##
-	## @return     { description_of_the_return_value }
+	## @return     This is a void method
 	##
 	def createTable(self, pathToDataBase, csvHeader):
 		firstTime = True
@@ -111,6 +137,27 @@ class ActorDB(object):
 		templateQuery += ")"
 		return templateQuery
 
+	##
+	## @brief      This method is basically a 'main' for this class. It's
+	##             responsible for create the database, the table and to 
+	##             insert the data.
+	##
+	## @param      self            Non static method
+	## 
+	## @param      pathToFolder    The path to folder
+	## 
+	## @param      header          The header from the csv files result. 
+	##                             Obtained from the function 
+	##                             'getHeaderFromCsvResult' of the 'fileManager'
+	##                             class. See its documentation for more info. 
+	##                             
+	## @param      rows            The rows from the csv files result. Obtained
+	##                             from the function 'getRowsFromCsvResult' of
+	##                             the file manager class. See its documentation
+	##                             for more info. 
+	##
+	## @return     This is a void method
+	##
 	def createAndInsert(self, pathToFolder, header, rows):
 		pathToDataBase = pathToFolder + '/' + self.nameTable + '.db'
 		self.createDataBase(pathToDataBase)
