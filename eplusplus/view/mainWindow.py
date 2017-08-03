@@ -4,7 +4,7 @@ import ctypes
 import webbrowser
 from .lineEdit import LineEdit
 from eplusplus.controller import ActorUser
-from eplusplus.exception import ColumnException, NoIdfException, InstallException
+from eplusplus.exception import ColumnException, NoIdfException, InstallException, NoCsvException
 from PyQt5.QtCore import QSize, Qt, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QIntValidator
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
@@ -403,7 +403,9 @@ class MainWindow(QWidget):
     ##             see its documentation for more info). If no IDF file be
     ##             founded at the folder informed, a exception will be raised.
     ##             Otherwise, if at least, one IDF be founded, the simulation
-    ##             will occur normally.
+    ##             will occur normally. After that, the 'actorUser' will try
+    ##             insert the data from the csv of result into the database.
+    ##             If no csv be found, a exception will be raise.
     ##
     ## @param      self  Non static method
     ##
@@ -422,13 +424,22 @@ class MainWindow(QWidget):
             self.processingMessage.setText(msg)
             QApplication.processEvents()
             self.actorUser.runSimulation(pathToFolder, pathToEpw)
+        except NoIdfException as e:
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setWindowTitle("EPlusPlus-ERR")
+            msg = str(e)
+            msgBox.setText(msg)
+            msgBox.exec_()
+
+        try:
+            self.actorUser.insertIntoDatabase(pathToFolder)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setWindowTitle("EPlusPlus-INF")
             msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
             msgBox.setText(msg)
             msgBox.exec_()
             self.cancelButtonClicked()
-        except NoIdfException as e:
+        except NoCsvException as e:
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setWindowTitle("EPlusPlus-ERR")
             msg = str(e)
