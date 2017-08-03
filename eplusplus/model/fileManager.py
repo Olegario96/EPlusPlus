@@ -15,7 +15,6 @@ from eplusplus.exception import NoCsvException
 ##        csv.
 ##
 class FileManager(object):
-
 	def __init__(self):
 		super(FileManager, self).__init__()
 		headerCsv = []
@@ -207,7 +206,7 @@ class FileManager(object):
 	##             Throw a exception saying that no CSV was found and a
 	##             error occurred during the simulation.
 	##
-	def getHeaderFromCsv(self, pathToFolder):
+	def getHeaderFromCsvResult(self, pathToFolder):
 		header = []
 		directories = os.listdir(pathToFolder)
 		directories = [pathToFolder +'/' + directory for directory in directories]
@@ -220,6 +219,7 @@ class FileManager(object):
 						with open(directory + '/' + file, 'r') as csvFile:
 							csvReader = csv.reader(csvFile, delimiter=',')
 							header = csvReader.__next__()
+							csvFile.close()
 							break
 				break
 
@@ -230,3 +230,34 @@ class FileManager(object):
 			raise NoCsvException(msg)
 		else:
 			return header
+
+	##
+	## @brief      This method is very similar to the 'getHeaderFromCsvResult'
+	##             but instead of takes the header from the csv, it takes all
+	##             the rows from the csv results from all simulations. After
+	##             that, just return the rows in a list of lists in each 
+	##             list represents a row.
+	##
+	## @param      self          Non static method.
+	## @param      pathToFolder  The path to folder containing the IDF files.
+	##
+	## @return     The rows from csv result.
+	##
+	def getRowsFromCsvResult(self, pathToFolder):
+		rows = []
+		directories = os.listdir(pathToFolder)
+		directories = [pathToFolder +'/' + directory for directory in directories]
+		for directory in directories:
+			lhsOrRandom = "LHS" in str(directory) or "RANDOM" in str(directory)
+			if os.path.isdir(directory) and lhsOrRandom:
+				files = os.listdir(directory)
+				for file in files:
+					if str(file).endswith('eplusout.csv'):
+						with open(directory + '/' + file, 'r') as csvFile:
+							csvReader = csv.reader(csvFile, delimiter=',')
+							csvReader.__next__()
+							for row in csvReader:
+								rows.append(row)
+							csvFile.close()
+
+		return rows
