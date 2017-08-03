@@ -257,7 +257,7 @@ class FileManager(object):
 							csvReader = csv.reader(csvFile, delimiter=',')
 							csvReader.__next__()
 							for row in csvReader:
-								rows.append(row)
+								rows.append(row + [csvFile.name])
 							csvFile.close()
 
 		return rows
