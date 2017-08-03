@@ -1,6 +1,7 @@
 import os
 import csv
 import subprocess
+from .actorDB import ActorDB
 from eplusplus.model import FileManager
 from eplusplus.model import Statiscal
 from eplusplus.model import PlatformManager
@@ -14,14 +15,13 @@ from eplusplus.exception import NoIdfException
 ##             eplusplus, the basic methods are generate the cases and
 ##             run the simulation.
 ##
-class ActorUser(object):
-
 	def __init__(self):
 		super(ActorUser, self).__init__()
 		self.fileManager = FileManager()
 		self.statiscal = Statiscal()
 		self.platformManager = PlatformManager()
 		self.procesManager = ProcessManager()
+		self.actorDB = ActorDB() 
 
 	##
 	## @brief      This method will check what is the OS that is running on
@@ -93,11 +93,8 @@ class ActorUser(object):
 		self.fileManager.removeTemporaryCsv(pathToFolder)
 
 	##
-	## @brief      This method lists all files and folders inside the
-	##             folder passed as arg. After that, we iterate through
-	##             each element. If, at least, one file has the .idf
-	##             extenstion, then return True. If no IDF file were
-	##             founded, than raise a exception.
+	## @brief      This method uses the 'getIDFFiles' if exists
+	##             , at least, one Idf file in the folder.
 	##
 	## @param      self          Non static method
 	## @param      pathToFolder  Path to the folder containing the IDF
@@ -109,13 +106,12 @@ class ActorUser(object):
 	##             Otherwise, will raise a exception.
 	##
 	def findIdfFiles(self, pathToFolder):
-		files = os.listdir(pathToFolder)
-		for file in files:
-			if str(file).endswith(".idf"):
-				return True
-
-		msg = "Não existe nenhum arquivo IDF na pasta informada!"
-		raise NoIdfException(msg)
+		idfFiles = self.fileManager.getIDFFiles(pathToFolder)
+		if idfFiles:
+			return True
+		else:
+			msg = "Não existe nenhum arquivo IDF na pasta informada!"
+			raise NoIdfException(msg)
 
 	##
 	## @brief      This method execute the simulation using IDF files and
@@ -126,13 +122,34 @@ class ActorUser(object):
 	##             is used to create a new folder to each case.
 	##
 	## @param      self          Non static method.
-	## @param      pathToFolder  The path to folder
-	## @param      pathToEpw     The path to epw
+	## @param      pathToFolder  Path to the folder containing the IDF
+	##                           files, informed by the user through the
+	##                           run simulation screen.
+	## @param      pathToEpw     The path to epw file informed through UI.
 	##
 	## @return     This is a void method
 	##
 	def runSimulation(self, pathToFolder, pathToEpw):
 		self.procesManager.executeTasks(self.platformManager, pathToEpw, pathToFolder, self.fileManager)
+
+	##
+	## @brief      This method gets the header from the csv file. This allow us
+	##             to create tables with dynamic names. After that, it takes
+	##             the rows from each csv of result generated during the
+	##             simulation and finnaly insert all the data into the
+	##             database.
+	##
+	## @param      self          Non static method
+	## @param      pathToFolder  The path where is the IDF files generated
+	##                           in the 'generateCases' method. Obtained
+	##                           from the user through GUI.
+	##
+	## @return     This is a void method
+	##
+	def insertIntoDatabase(self, pathToFolder):
+		header = self.fileManager.getHeaderFromCsvResult(pathToFolder)
+		rows = self.fileManager.getRowsFromCsvResult(pathToFolder)
+		self.actorDB.createAndInsert(pathToFolder, header, rows)
 
 	##
 	## @brief      Removes a temporary csv from the folder where the operations
