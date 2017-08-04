@@ -432,7 +432,15 @@ class MainWindow(QWidget):
             self.actorUser.insertIntoDatabase(pathToFolder)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setWindowTitle("EPlusPlus-INF")
-            msg = "Processo finalizado! Verifique a pasta informada para acessar os arquivos."
+            msg = "Processo finalizado com sucesso!"
+            msgBox.setText(msg)
+            msgBox.exec_()
+            ask = 'Você gostaria de apagar os arquivos e manter somente a base de dados?'
+            reply = QMessageBox.question(self, "EPlusPlus-INF", ask, QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.actorUser.removeDirectories(pathToFolder)
+
+            msg = "Arquivos removidos com sucesso!"
             msgBox.setText(msg)
             msgBox.exec_()
             self.cancelButtonClicked()
