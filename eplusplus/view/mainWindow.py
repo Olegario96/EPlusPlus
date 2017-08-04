@@ -3,6 +3,7 @@ import sys
 import ctypes
 import webbrowser
 from .lineEdit import LineEdit
+from .dialogWithCheckBox import DialogWithCheckBox
 from eplusplus.controller import ActorUser
 from eplusplus.exception import ColumnException, NoIdfException, InstallException, NoCsvException
 from PyQt5.QtCore import QSize, Qt, QRect
@@ -23,20 +24,16 @@ from PyQt5.QtWidgets import QButtonGroup, QLineEdit, QAction, QMenuBar
 class MainWindow(QWidget):
     def __init__(self, args):
         super(MainWindow, self).__init__()
-        msgBox = QMessageBox()
-        msgBox.setIcon(QMessageBox.Warning)
-        msgBox.setWindowTitle("EPlusPlus-WAR")
-        msgBox.setText("ATENÇÃO! Para que o programa funcione corretamente, não deve haver espaços em branco tanto no nome de pastas quanto dos arquivos. Para mais informações sobre esta restrição, por favor, cheque a documentação.")
-        msgBox.exec_()
-
-        self.args = args
+        msgBox = DialogWithCheckBox(self)
 
         self.firstTime = True
-
         self.pathToIcon = "./media/icon.png"
-        
-
         self.actorUser = ActorUser()
+
+        if not self.actorUser.existsFile():
+            checkedBox = msgBox.exec_()[1]
+            if checkedBox:
+                self.actorUser.createsFile()
 
         self.logo = QLabel()
 
