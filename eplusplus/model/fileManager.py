@@ -261,3 +261,26 @@ class FileManager(object):
 							csvFile.close()
 
 		return rows
+
+	##
+	## @brief      Determines if the file 'checkbox.txt' exists or not.
+	##
+	## @param      self  Non static method.
+	##
+	## @return     True if exists file, False otherwise.
+	##
+	def existsFile(self):
+		return os.path.isfile('checkbox.txt')
+
+	##
+	## @brief      Creates the file to remember the user marked the checkbox
+	##             before.
+	##
+	## @param      self  Non static method
+	##
+	## @return     This is a void function
+	##
+	def createFile(self):
+		fileCheckBox = open('checkbox.txt', 'w')
+		fileCheckBox.write('Now the file exsits.')
+		fileCheckBox.close()
