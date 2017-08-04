@@ -164,3 +164,30 @@ class ActorUser(object):
 	##
 	def removeTemporaryCsv(self, pathToFolder):
 		self.fileManager.removeTemporaryCsv(pathToFolder)
+
+	##
+	## @brief      This method is used to test if the file of the check box
+	##             exists. The first window of the program inform the user
+	##             about the white space problem in the path and the user
+	##             has the posibility to never see this warning again. So,
+	##             to do that, we need to create a persistent solution. 
+	##             Then the file manager will test if the file 'checkbox.txt'
+	##             exists or not. If not, return false. True, otherwise.
+	##
+	## @param      self  Non static method.
+	##
+	## @return     True if exists file, False otherwise.
+	##
+	def existsFile(self):
+		return self.fileManager.existsFile()
+
+	##
+	## @brief      It the file didn't exist before and the the user
+	##             marked the check box, the file manager will create.
+	##
+	## @param      self  Non static method.
+	##
+	## @return     This is a void function.
+	##
+	def createsFile(self):
+		self.fileManager.createFile()
