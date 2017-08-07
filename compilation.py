@@ -1,3 +1,4 @@
+#To compile we need to run: python compilation.py py2exe
 from distutils.core import setup
 from glob import glob
 import os
