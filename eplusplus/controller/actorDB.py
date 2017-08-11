@@ -10,6 +10,7 @@ import sqlite3
 class ActorDB(object):
 	def __init__(self):
 		super(ActorDB, self).__init__()
+		self.nameDataBase = 'simulacaoEPlusPlus'
 		self.nameTable = 'simulacao'
 
 	##
@@ -159,7 +160,7 @@ class ActorDB(object):
 	## @return     This is a void method
 	##
 	def createAndInsert(self, pathToFolder, header, rows):
-		pathToDataBase = pathToFolder + '/' + self.nameTable + '.db'
+		pathToDataBase = pathToFolder + '/' + self.nameDataBase + '.db'
 		self.createDataBase(pathToDataBase)
 		self.createTable(pathToDataBase, header)
 		self.insertData(pathToDataBase, rows)
