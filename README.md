@@ -22,4 +22,4 @@ packges installed in your machine, you can just create a `venv` and execute the 
 ## Running on Windows
 
 Just download the installator and follow the steps:
-LINK
+ [Download installer](http://www.labeee.ufsc.br/node/717)
