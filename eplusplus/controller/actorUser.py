@@ -91,7 +91,6 @@ class ActorUser(object):
 
 		self.fileManager.writeMappedValues(mappedValues, pathToFolder)
 		self.fileManager.writeNewValues(pathToIdf, pathToFolder, method)
-		self.fileManager.removeTemporaryCsv(pathToFolder)
 
 	##
 	## @brief      This method uses the 'getIDFFiles' if exists
@@ -153,19 +152,6 @@ class ActorUser(object):
 		self.actorDB.createAndInsert(pathToFolder, header, rows)
 
 	##
-	## @brief      Removes a temporary csv from the folder where the operations
-	##             were made it.
-	##
-	## @param      self          Non static method.
-	## @param      pathToFolder  The path to folder where is the temporary
-	##                           CSV file.
-	##
-	## @return     This is a void method.
-	##
-	def removeTemporaryCsv(self, pathToFolder):
-		self.fileManager.removeTemporaryCsv(pathToFolder)
-
-	##
 	## @brief      This method is used to test if the file of the check box
 	##             exists. The first window of the program inform the user
 	##             about the white space problem in the path and the user
@@ -178,8 +164,8 @@ class ActorUser(object):
 	##
 	## @return     True if exists file, False otherwise.
 	##
-	def existsFile(self):
-		return self.fileManager.existsFile()
+	def existsFileConfirmCheckBox(self):
+		return self.fileManager.existsFileConfirmCheckBox()
 
 	##
 	## @brief      It the file didn't exist before and the the user
@@ -189,5 +175,18 @@ class ActorUser(object):
 	##
 	## @return     This is a void function.
 	##
-	def createsFile(self):
-		self.fileManager.createFile()
+	def createFileConfirmCheckBox(self):
+		self.fileManager.createFileConfirmCheckBox()
+
+	##
+	## @brief      Removes directories from the simulation.
+	##
+	## @param      self          Non static method
+	## @param      pathToFolder  The path to folder where lies
+	##                           the directories generated during the
+	##                           simulation
+	##
+	## @return     This is a void method.
+	##
+	def removeDirectories(self, pathToFolder):
+		self.fileManager.removeDirectories(pathToFolder)
