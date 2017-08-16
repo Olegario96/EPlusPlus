@@ -10,8 +10,10 @@ import sqlite3
 class ActorDB(object):
 	def __init__(self):
 		super(ActorDB, self).__init__()
-		self.nameDataBase = 'simulacaoEPlusPlus'
-		self.nameTable = 'simulacao'
+		self.nameDataBase = "simulacaoEPlusPlus"
+		self.nameTableCases = "casos"
+		self.nameTableSimulation = "resultadosSimulacao"
+		self.nameTableSample = "amostraSimulacao"
 
 	##
 	## @brief      This method is very simple. It just creates the database
@@ -25,86 +27,131 @@ class ActorDB(object):
 	def createDataBase(self, pathToDataBase):
 		conn = sqlite3.connect(pathToDataBase)
 		conn.commit()
-		conn.close()		
+		conn.close()
 
 	##
-	## @brief      This method is responsible for create the table in the 
-	##             database and to insert all the data from the last simulation.
-	##             Its important to explain that for each batch of simulation,
-	##             we create a new table. So, for standardize the name of the
-	##             tables each table start with the name 'simualcao' 
-	##             concatenated with the number of the simulation. Doing this,
-	##             the user will be able to compare new and old simulations.
-	##             So this function creates a query using the name of the table
-	##             concatenated with the number of the simulation and append
-	##             a '%s' for each column in the csvHeader. Finally, it will
-	##             create a column 'nomeArquivo' that references each 
-	##             file was responsible for that results. Then the cursor
-	##             just executes the query and we commit and close the 
-	##             connection.
+	## @brief      Creates table cases in the database. The table have just
+	##             one column of the type INTEGER AUTOINCREMENT to indicate the
+	##             number of the case
 	##
 	## @param      self            Non static method
-	## 
 	## @param      pathToDataBase  The path to data base
-	## 
-    ## @param      header          The header from the csv files result. 
-	##                             Obtained from the function 
-	##                             'getHeaderFromCsvResult' of the 'fileManager'
-	##                             class. See its documentation for more info. 
-	##                             
 	##
 	## @return     This is a void method
 	##
-	def createTable(self, pathToDataBase, csvHeader):
+	def createTableCases(self, pathToDataBase):
+		conn = sqlite3.connect(pathToDataBase)
+		cursor = conn.cursor()
+
+		queryCreate = """CREATE TABLE IF NOT EXISTS casos (
+							idCaso  INTEGER PRIMARY KEY AUTOINCREMENT);"""
+
+		cursor.execute(queryCreate)
+		conn.commit()
+		conn.close()
+
+	##
+	## @brief      Creates a table for the results or for the sample. This
+	##             method starts creating a connection with the database and
+	##             listing all the tables on the  base. If there is more than
+	##             3, means that the base already exists, then we need to
+	##             set the name of our tables to "len(tables)/3 + 1". Otherwise,
+	##             will set with number, which represents the first simulation.
+	##             After that, it just creates the query using the 'idCaso'
+	##             as FK. At the end, just executes the query to create the
+	##             table and commit the changes.
+	##
+	## @param      self            Non static method
+	## @param      pathToDataBase  The path to data base
+	## @param      header          The header of the csv that we want create a 
+	##                             table
+	## @param      typeTable       The type table (i.e. if is of the type 
+	##                             'simulation' or 'sample')
+	##
+	## @return     This is a void function
+	##
+	def createTableRS(self, pathToDataBase, header, typeTable):
 		firstTime = True
 		conn = sqlite3.connect(pathToDataBase)
 		cursor = conn.cursor()
 		queryTables = """SELECT * FROM sqlite_master WHERE type='table';"""
 		tables = list(cursor.execute(queryTables))
 
-		if len(tables) > 0:
-			self.nameTable += str(len(tables) + 1) 
+		if len(tables) > 3:
+			if typeTable == "simulation":
+				self.nameTableSimulation += str(int((len(tables))/3) + 1) 
+				nameTable = self.nameTableSimulation
+			elif typeTable == "sample":
+				self.nameTableSample += str(int((len(tables))/3) + 1)
+				nameTable = self.nameTableSample
 		else:
-			self.nameTable += str(1)
+			if typeTable == "simulation":
+				self.nameTableSimulation += str(1)
+				nameTable = self.nameTableSimulation
+			elif typeTable == "sample":
+				self.nameTableSample += str(1)
+				nameTable = self.nameTableSample
 
-		createTable = """CREATE TABLE IF NOT EXISTS	%s (""" % (self.nameTable)
-		for column in csvHeader:
+		createTable = """CREATE TABLE IF NOT EXISTS	%s (""" % (nameTable)
+		for column in header:
 			if not firstTime:
 				createTable += """,'%s' REAL"""
 			else:
 				firstTime = False
-				createTable += """'%s' TEXT"""
-		createTable += """, nomeArquivo TEXT)"""
+				createTable += """idCaso INTEGER"""
+				createTable += """,'%s' TEXT"""
 
-		finalQuery = createTable % (tuple(csvHeader))
+		createTable += """, FOREIGN KEY(idCaso) REFERENCES casos(idCaso));"""
+
+		finalQuery = createTable % (tuple(header))
 		cursor.execute(finalQuery)
 		conn.commit()
 		conn.close()
 
 	##
-	## @brief      This method connects to the database previously created 
-	##             and will insert each row in the current table of simulation.
-	##             After doing this for all rows, just commit and ends the
-	##             connection.
+	## @brief      This method is responsible for insert the data of the sample
+	##             file and the results obtained from the csv files after 
+	##             the simulation process into the database. After connect
+	##             in the database, it will create 2 templates of query. One
+	##             for the 'simulation' table and other for the the 'sample'
+	##             table. Next, it will analyze what is the number of the last
+	##             case that was inserted into the database, if no data was
+	##             there, then will initiate the variable with 1. Finally 
+	##             will insert all results of each sample in the database always
+	##             after create a new case. At the end, just commit the changes
+	##             and close the connection.
 	##
 	## @param      self            Non static method
 	## @param      pathToDataBase  The path to data base
-	## @param      rows            The rows from the csv files result. Obtained
-	##                             from the function 'getRowsFromCsvResult' of
-	##                             the file manager class. See its documentation
-	##                             for more info. 
+	## @param      rowsResult      The rows obtained from the result file
+	## @param      rowsSample      The rows obtained from the sample file
 	##
 	## @return     This is a void method
 	##
-	def insertData(self, pathToDataBase, rows):
+	def insertData(self, pathToDataBase, rowsResult, rowsSample):
 		conn = sqlite3.connect(pathToDataBase)
 		cursor = conn.cursor()
-		query = self.createQueryInsert(cursor)
+		querySimulation = self.createQueryInsert(cursor, "simulation")
+		querySample = self.createQueryInsert(cursor, "sample")
 
-		for row in rows:
-			finalQuery = query % (tuple(row))
-			cursor.execute(finalQuery)
+		case = cursor.execute("""SELECT COUNT (*) FROM casos""")
+		idCase = cursor.fetchone()[0]
+		if idCase == 0:
+			idCase = 1
+		else:
+			idCase += 1
 
+		for sample in rowsSample:
+			cursor.execute("""INSERT INTO casos DEFAULT VALUES;""")
+			finalQuerySample = querySample % (tuple([idCase] + sample))
+			cursor.execute(finalQuerySample)
+
+			for result in rowsResult:
+				finalQuerySimulation = querySimulation % (tuple([idCase] + result))
+				cursor.execute(finalQuerySimulation)
+
+			idCase += 1
+			
 		conn.commit()
 		conn.close()
 
@@ -122,12 +169,20 @@ class ActorDB(object):
 	## @return     Return a query template that will be used to insert new data
 	##             into our database.
 	##
-	def createQueryInsert(self, cursor):
+	def createQueryInsert(self, cursor, table):
 		firstTime = True
-		query = """SELECT * FROM %s """ % (self.nameTable)
-		templateQuery = """INSERT INTO %s VALUES (""" % (self.nameTable)
-		names = cursor.execute(query)
 
+		if table == "simulation":
+			nTable = self.nameTableSimulation
+		elif table == "cases":
+			nTable = self.nameTableCases
+		elif table == "sample":
+			nTable = self.nameTableSample
+
+		query = """SELECT * FROM %s """ % (nTable)
+		templateQuery = """INSERT INTO %s VALUES(""" % (nTable) 
+
+		names = cursor.execute(query)
 		for name in names.description:
 			if not firstTime:
 				templateQuery += ",'%s' "
@@ -139,28 +194,23 @@ class ActorDB(object):
 		return templateQuery
 
 	##
-	## @brief      This method is basically a 'main' for this class. It's
-	##             responsible for create the database, the table and to 
-	##             insert the data.
+	## @brief      This method just resets the name of the tables, since each 
+	##             time we insert data on the DB after the simulation we create
+	##             new tables based on this names.
 	##
-	## @param      self            Non static method
-	## 
-	## @param      pathToFolder    The path to folder
-	## 
-	## @param      header          The header from the csv files result. 
-	##                             Obtained from the function 
-	##                             'getHeaderFromCsvResult' of the 'fileManager'
-	##                             class. See its documentation for more info. 
-	##                             
-	## @param      rows            The rows from the csv files result. Obtained
-	##                             from the function 'getRowsFromCsvResult' of
-	##                             the file manager class. See its documentation
-	##                             for more info. 
+	## @param      self  Non static method
 	##
-	## @return     This is a void method
+	## @return     This is a void method.
 	##
-	def createAndInsert(self, pathToFolder, header, rows):
+	def resetTableNames(self):
+		self.nameTableSimulation = "resultadosSimulacao"
+		self.nameTableSample = "amostraSimulacao"
+
+	def createAndInsert(self, pathToFolder, headerResult, rowsResult, headerSample, rowsSample):
 		pathToDataBase = pathToFolder + '/' + self.nameDataBase + '.db'
 		self.createDataBase(pathToDataBase)
-		self.createTable(pathToDataBase, header)
-		self.insertData(pathToDataBase, rows)
+		self.createTableCases(pathToDataBase)
+		self.createTableRS(pathToDataBase, headerResult, "simulation")
+		self.createTableRS(pathToDataBase, headerSample, "sample")
+		self.insertData(pathToDataBase, rowsResult, rowsSample)
+		self.resetTableNames()
