@@ -30,10 +30,10 @@ class MainWindow(QWidget):
         self.pathToIcon = "./media/icon.png"
         self.actorUser = ActorUser()
 
-        if not self.actorUser.existsFile():
+        if not self.actorUser.existsFileConfirmCheckBox():
             checkedBox = msgBox.exec_()[1]
             if checkedBox:
-                self.actorUser.createsFile()
+                self.actorUser.createFileConfirmCheckBox()
 
         self.logo = QLabel()
 
@@ -390,7 +390,6 @@ class MainWindow(QWidget):
             msg = str(e)
             msgBox.setText(msg)
             msgBox.exec_()
-            self.actorUser.removeTemporaryCsv(pathToFolder)
 
     ##
     ## @brief      At first lines, we transform the content informed by the
@@ -439,10 +438,10 @@ class MainWindow(QWidget):
             reply = QMessageBox.question(self, "EPlusPlus-INF", ask, QMessageBox.Yes, QMessageBox.No)
             if reply == QMessageBox.Yes:
                 self.actorUser.removeDirectories(pathToFolder)
+                msg = "Arquivos removidos com sucesso!"
+                msgBox.setText(msg)
+                msgBox.exec_()
 
-            msg = "Arquivos removidos com sucesso!"
-            msgBox.setText(msg)
-            msgBox.exec_()
             self.cancelButtonClicked()
         except NoCsvException as e:
             msgBox.setIcon(QMessageBox.Critical)
