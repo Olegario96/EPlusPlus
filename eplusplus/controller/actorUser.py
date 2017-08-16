@@ -132,24 +132,28 @@ class ActorUser(object):
 	def runSimulation(self, pathToFolder, pathToEpw):
 		self.procesManager.executeTasks(self.platformManager, pathToEpw, pathToFolder, self.fileManager)
 
+
 	##
-	## @brief      This method gets the header from the csv file. This allow us
-	##             to create tables with dynamic names. After that, it takes
-	##             the rows from each csv of result generated during the
-	##             simulation and finnaly insert all the data into the
-	##             database.
+	## @brief      This method is responsible for take the values from the 
+	##             csv files of result, the headers and for insert the data
+	##             into the database. See the "createAndInsert" method 
+	##             documentation for more info.
 	##
 	## @param      self          Non static method
-	## @param      pathToFolder  The path where is the IDF files generated
-	##                           in the 'generateCases' method. Obtained
-	##                           from the user through GUI.
+	## @param      pathToFolder  Path to the folder containing the IDF
+	##                           files generated during the "generate cases"
+	##                           step. Informed by the user through the
+	##                           run simulation screen.
 	##
-	## @return     This is a void method
+	## @return     This is a void method.
 	##
 	def insertIntoDatabase(self, pathToFolder):
-		header = self.fileManager.getHeaderFromCsvResult(pathToFolder)
-		rows = self.fileManager.getRowsFromCsvResult(pathToFolder)
-		self.actorDB.createAndInsert(pathToFolder, header, rows)
+		headerResult = self.fileManager.getHeaderFromCsvResult(pathToFolder)
+		rowsResult = self.fileManager.getRowsFromCsvResult(pathToFolder)
+		headerSample = self.fileManager.getHeaderFromSample(pathToFolder)
+		rowsHeader = self.fileManager.getRowsFromCsvSample(pathToFolder)
+
+		self.actorDB.createAndInsert(pathToFolder, headerResult, rowsResult, headerSample, rowsHeader)
 
 	##
 	## @brief      This method is used to test if the file of the check box
