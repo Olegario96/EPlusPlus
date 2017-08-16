@@ -78,7 +78,7 @@ class FileManager(object):
 	## @return     This is a void method
 	##
 	def writeMappedValues(self, mappedValues, pathToFolder):
-		newFile = open(pathToFolder + "/tempFile.csv", 'w', newline="")
+		newFile = open(pathToFolder + "/sample.csv", 'w', newline="")
 		csvWriter = csv.writer(newFile, delimiter=',', quotechar='|')
 
 		csvWriter.writerow(self.headerCsv)
@@ -116,7 +116,7 @@ class FileManager(object):
 	##
 	def writeNewValues(self, pathToIdf, pathToFolder, method):
 		idfFile = open(pathToIdf, 'r')
-		csvFile = open(pathToFolder + "/tempFile.csv", 'r')
+		csvFile = open(pathToFolder + "/sample.csv", 'r')
 
 		csvReader = csv.reader(csvFile, delimiter=',')
 		nameColumns = csvReader.__next__()
@@ -151,18 +151,6 @@ class FileManager(object):
 
 					idfOut.write(newLine)
 				i += 1
-
-	##
-	## @brief      Removes a temporary csv.
-	##
-	## @param      self          Non static method.
-	## @param      pathToFolder  The path to folder where the temp file is
-	##                           located.
-	##
-	## @return     This is a void method.
-	##
-	def removeTemporaryCsv(self, pathToFolder):
-		os.remove(pathToFolder + "/tempFile.csv")
 
 	##
 	## @brief      This method iterate through each file in the folder passed
@@ -270,7 +258,7 @@ class FileManager(object):
 	##
 	## @return     True if exists file, False otherwise.
 	##
-	def existsFile(self):
+	def existsFileConfirmCheckBox(self):
 		return os.path.isfile('checkbox.txt')
 
 	##
@@ -281,7 +269,7 @@ class FileManager(object):
 	##
 	## @return     This is a void function
 	##
-	def createFile(self):
+	def createFileConfirmCheckBox(self):
 		fileCheckBox = open('checkbox.txt', 'w')
 		fileCheckBox.write('Now the file exsits.')
 		fileCheckBox.close()
