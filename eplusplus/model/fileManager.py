@@ -48,7 +48,7 @@ class FileManager(object):
 		for row in csvReader:
 			while i < len(row):
 				if not firstTime:
-					if row[i] not in possibleValues[i]:
+					if row[i] not in possibleValues[i] and row[i] != "":
 						possibleValues[i].append(row[i])
 				else:
 					self.headerCsv = row
